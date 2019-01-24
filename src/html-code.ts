@@ -6,6 +6,8 @@
 <html-code>表示したいHTMLコード</html-code>
 */
 
+document.addEventListener( 'DOMContentLoaded', () => { HTMLCode.Init(); } );
+
 class HTMLCode extends HTMLElement
 {
 	public static Init( tagname = 'html-code' ) { customElements.define( tagname, this ); }
@@ -44,6 +46,12 @@ class HTMLCode extends HTMLElement
 		// コードを読み込む
 		this.updateCode();
 
+		// change属性が設定されている場合、changeイベントの監視を行う。
+		if ( this.hasAttribute( 'change' ) && this.children[ 0 ] )
+		{
+			this.children[ 0 ].addEventListener( 'change', ( event ) => { console.log( event ); } );
+		}
+
 		contents.appendChild( view );
 		contents.appendChild( source );
 
@@ -58,5 +66,3 @@ class HTMLCode extends HTMLElement
 		this.code.textContent = this.innerHTML;
 	}
 }
-
-document.addEventListener( 'DOMContentLoaded', () => { HTMLCode.Init(); } );

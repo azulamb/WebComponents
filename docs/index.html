@@ -11,12 +11,44 @@
 	<link rel="apple-touch-icon" sizes="152x152" href="./apple-touch-icon-precomposed.png">-->
 	<script type="text/javascript" src="./html-code.js"></script>
 	<script type="text/javascript" src="./favorite-button.js"></script>
+	<script type="text/javascript" src="./dice-roll.js"></script>
+	<script type="text/javascript" src="./rating-stars.js"></script>
+	<script type="text/javascript" src="./shogi-piece.js"></script>
 </head>
 <body>
 	<h1>My WebComponents sample</h1>
 
 	<h2>favorite-button</h2>
-	<html-code><favorite-button></favorite-button></html-code>
+	<html-code change><favorite-button></favorite-button></html-code>
+
+	<h2>dice-roll</h2>
+	<html-code change><dice-roll></dice-roll>
+<dice-roll max="3"></dice-roll>
+<dice-roll min="4"></dice-roll></html-code>
+
+	<h2>rating-stars</h2>
+	<html-code change><rating-stars></rating-stars></html-code>
+
+	<h2>shogi-piece</h2>
+	<html-code change><shogi-piece>あ</shogi-piece>
+<shogi-piece enemy>あ</shogi-piece>
+<shogi-piece piece="king"></shogi-piece>
+<shogi-piece piece="玉"></shogi-piece>
+<shogi-piece piece="king" enemy></shogi-piece>
+<shogi-piece piece="玉" enemy></shogi-piece>
+<shogi-piece piece="rook"></shogi-piece>
+<shogi-piece piece="rook" reverse></shogi-piece>
+<shogi-piece piece="bishop"></shogi-piece>
+<shogi-piece piece="bishop" reverse></shogi-piece>
+<shogi-piece piece="gold"></shogi-piece>
+<shogi-piece piece="silver"></shogi-piece>
+<shogi-piece piece="silver" reverse></shogi-piece>
+<shogi-piece piece="knight"></shogi-piece>
+<shogi-piece piece="knight" reverse></shogi-piece>
+<shogi-piece piece="lance"></shogi-piece>
+<shogi-piece piece="lance" reverse></shogi-piece>
+<shogi-piece piece="pawn"></shogi-piece>
+<shogi-piece piece="pawn" reverse></shogi-piece></html-code>
 
 </body>
 </html>

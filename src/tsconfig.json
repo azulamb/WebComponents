@@ -3,6 +3,7 @@
 		"outDir": "../docs",
 		"module": "amd",
 		"target": "es6",
+		"removeComments": true,
 		"strictNullChecks": true,
 		"noImplicitAny": true,
 		"sourceMap": false

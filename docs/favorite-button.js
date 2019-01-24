@@ -1,6 +1,9 @@
 /* お気に入りボタン
 ☆をクリックすると★になって、更にクリックすると☆に戻る。
 そんな、単純なボタン。
+
+使い方：
+<favorite-button></favorite-button>
 */
 class FavoriteButton extends HTMLElement {
     static Init(tagname = 'favorite-button') {

@@ -1,6 +1,9 @@
 /* ソースコードの表示と実行
 中にあるHTMLのソースコードの実行結果をそのコードを同時に表示します。
 あのサンプルページを動かすために作りました。
+
+使い方：
+<html-code>表示したいHTMLコード</html-code>
 */
 class HTMLCode extends HTMLElement {
     static Init(tagname = 'html-code') { customElements.define(tagname, this); }
@@ -10,8 +13,9 @@ class HTMLCode extends HTMLElement {
         const style = document.createElement('style');
         style.innerHTML = [
             ':host { display: block; width: 100%; height: fit-content; }',
-            ':host > div { width: 100%; display: flex; }',
-            ':host > div > div { width: 50%; box-sizing: border-box; }',
+            ':host > div { width: 100%; display: flex; justify-content: space-between; }',
+            ':host > div > div { width: 49%; margin: 0; padding: 0.5em; box-sizing: border-box; border-radius: 0.5rem; border: 1px solid gray; }',
+            'pre { margin: 0; }',
         ].join('');
         const contents = document.createElement('div');
         // 実行結果を置いておく場所

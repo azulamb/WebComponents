@@ -7,16 +7,16 @@
 <rating-stars length="LENGTH" rating="RATING"></rating-stars>
 * LENGTH
     * 表示する★の数です。省略すると5になります。
-	* あまり多くても困るので、内部的に最大値が20になるよう調整されます。
+    * あまり多くても困るので、内部的に最大値が20になるよう調整されます。
 * RATING
     * 評価の数です。1なら★1つです。
 const element = new RatingStar();
 * element.length: number
     * ★の数です。
-	* 代入するとその数だけ星を表示します。
+    * 代入するとその数だけ星を表示します。
 * element.rating
     * 評価数です。
-	* 代入するとその評価数にしますが、最大★数を超えると最大星数に調整されます。
+    * 代入するとその評価数にしますが、最大★数を超えると最大星数に調整されます。
 * element.addeventListener( 'change', ( this: FavoriteButton, event: Event ) => any );
     * 評価変更時に発生するイベントです。
 */
@@ -26,6 +26,8 @@ document.addEventListener( 'DOMContentLoaded', () => { RatingStar.Init(); } );
 class RatingStar extends HTMLElement
 {
 	private static StarTag = 'favorite-button';
+	// 今回はタグ名だけでなく、中に使う★のタグ名も指定できるようにします。
+	// 第二引数を指定した場合、そのタグが登録されるまで待ちます。
 	public static Init( tagname = 'rating-stars', waittag = this.StarTag )
 	{
 		// カスタムエレメントが定義されるまで待ちます。

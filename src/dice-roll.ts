@@ -11,14 +11,14 @@
 const element = new DiceRoll();
 * element.dice: number
     * 現在のダイスの目を1～6の数値で返します。
-	* 値を代入するとダイスの目を設定できます。
-	    * TypeScript上は数値のみですが文字列を与えても適当に変換して、不正な値はすべて1になります。
+    * 値を代入するとダイスの目を設定できます。
+        * TypeScript上は数値のみですが文字列を与えても適当に変換して、不正な値はすべて1になります。
 ＊ element.roll(): boolean
-	* ダイスロールを開始します。
-	* すでにダイスロールされている場合、falseが返されます。
+    * ダイスロールを開始します。
+    * すでにダイスロールされている場合、falseが返されます。
 * element.stop(): boolean
     * ダイスロールを停止します。
-	* すでに停止している場合、falseが返されます。
+    * すでに停止している場合、falseが返されます。
 * element.addeventListener( 'change', ( this: FavoriteButton, event: Event ) => any );
     * 変更時に発生するイベントです。
 
@@ -252,5 +252,5 @@ class DiceRoll extends HTMLElement
 			case 'max': this.onUpdateMax( newVal ); break;
 			case 'dice': this.onUpdateDice( newVal ); break;
 		}
-    }
+	}
 }

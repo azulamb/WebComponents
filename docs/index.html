@@ -9,13 +9,14 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<link rel="apple-touch-icon" sizes="152x152" href="./apple-touch-icon-precomposed.png">-->
-	<script type="text/javascript" src="./html-code.js"></script>
-	<script type="text/javascript" src="./favorite-button.js"></script>
-	<script type="text/javascript" src="./dice-roll.js"></script>
-	<script type="text/javascript" src="./rating-stars.js"></script>
-	<script type="text/javascript" src="./shogi-piece.js"></script>
-	<script type="text/javascript" src="./game-board.js"></script>
-	<script type="text/javascript" src="./shogi-board.js"></script>
+	<script src="./html-code.js"></script>
+	<script src="./favorite-button.js"></script>
+	<script src="./dice-roll.js"></script>
+	<script src="./rating-stars.js"></script>
+	<script src="./shogi-piece.js"></script>
+	<script src="./game-board.js"></script>
+	<script src="./shogi-board.js"></script>
+	<script src="./mine-sweeper.js"></script>
 </head>
 <body>
 	<h1>My WebComponents sample</h1>
@@ -57,47 +58,54 @@
 
 	<h2>shogi-board</h2>
 	<html-code change><shogi-board>
-	<shogi-piece piece="l" data-position="x0y0" enemy></shogi-piece>
-	<shogi-piece piece="n" data-position="x1y0" enemy></shogi-piece>
-	<shogi-piece piece="s" data-position="x2y0" enemy></shogi-piece>
-	<shogi-piece piece="g" data-position="x3y0" enemy></shogi-piece>
-	<shogi-piece piece="k" data-position="x4y0" enemy></shogi-piece>
-	<shogi-piece piece="g" data-position="x5y0" enemy></shogi-piece>
-	<shogi-piece piece="s" data-position="x6y0" enemy></shogi-piece>
-	<shogi-piece piece="n" data-position="x7y0" enemy></shogi-piece>
-	<shogi-piece piece="l" data-position="x8y0" enemy></shogi-piece>
-	<shogi-piece piece="r" data-position="x1y1" enemy></shogi-piece>
-	<shogi-piece piece="b" data-position="x7y1" enemy></shogi-piece>
-	<shogi-piece piece="p" data-position="x0y2" enemy></shogi-piece>
-	<shogi-piece piece="p" data-position="x1y2" enemy></shogi-piece>
-	<shogi-piece piece="p" data-position="x2y2" enemy></shogi-piece>
-	<shogi-piece piece="p" data-position="x3y2" enemy></shogi-piece>
-	<shogi-piece piece="p" data-position="x4y2" enemy></shogi-piece>
-	<shogi-piece piece="p" data-position="x5y2" enemy></shogi-piece>
-	<shogi-piece piece="p" data-position="x6y2" enemy></shogi-piece>
-	<shogi-piece piece="p" data-position="x7y2" enemy></shogi-piece>
-	<shogi-piece piece="p" data-position="x8y2" enemy></shogi-piece>
+	<shogi-piece piece="l" data-position="x1y1" enemy></shogi-piece>
+	<shogi-piece piece="n" data-position="x2y1" enemy></shogi-piece>
+	<shogi-piece piece="s" data-position="x3y1" enemy></shogi-piece>
+	<shogi-piece piece="g" data-position="x4y1" enemy></shogi-piece>
+	<shogi-piece piece="k" data-position="x5y1" enemy></shogi-piece>
+	<shogi-piece piece="g" data-position="x6y1" enemy></shogi-piece>
+	<shogi-piece piece="s" data-position="x7y1" enemy></shogi-piece>
+	<shogi-piece piece="n" data-position="x8y1" enemy></shogi-piece>
+	<shogi-piece piece="l" data-position="x9y1" enemy></shogi-piece>
+	<shogi-piece piece="r" data-position="x2y2" enemy></shogi-piece>
+	<shogi-piece piece="b" data-position="x8y2" enemy></shogi-piece>
+	<shogi-piece piece="p" data-position="x1y3" enemy></shogi-piece>
+	<shogi-piece piece="p" data-position="x2y3" enemy></shogi-piece>
+	<shogi-piece piece="p" data-position="x3y3" enemy></shogi-piece>
+	<shogi-piece piece="p" data-position="x4y3" enemy></shogi-piece>
+	<shogi-piece piece="p" data-position="x5y3" enemy></shogi-piece>
+	<shogi-piece piece="p" data-position="x6y3" enemy></shogi-piece>
+	<shogi-piece piece="p" data-position="x7y3" enemy></shogi-piece>
+	<shogi-piece piece="p" data-position="x8y3" enemy></shogi-piece>
+	<shogi-piece piece="p" data-position="x9y3" enemy></shogi-piece>
 
-	<shogi-piece piece="p" data-position="x0y6"></shogi-piece>
-	<shogi-piece piece="p" data-position="x1y6"></shogi-piece>
-	<shogi-piece piece="p" data-position="x2y6"></shogi-piece>
-	<shogi-piece piece="p" data-position="x3y6"></shogi-piece>
-	<shogi-piece piece="p" data-position="x4y6"></shogi-piece>
-	<shogi-piece piece="p" data-position="x5y6"></shogi-piece>
-	<shogi-piece piece="p" data-position="x6y6"></shogi-piece>
-	<shogi-piece piece="p" data-position="x7y6"></shogi-piece>
-	<shogi-piece piece="p" data-position="x8y6"></shogi-piece>
-	<shogi-piece piece="b" data-position="x1y7"></shogi-piece>
-	<shogi-piece piece="r" data-position="x7y7"></shogi-piece>
-	<shogi-piece piece="l" data-position="x0y8"></shogi-piece>
-	<shogi-piece piece="n" data-position="x1y8"></shogi-piece>
-	<shogi-piece piece="s" data-position="x2y8"></shogi-piece>
-	<shogi-piece piece="g" data-position="x3y8"></shogi-piece>
-	<shogi-piece piece="k" data-position="x4y8"></shogi-piece>
-	<shogi-piece piece="g" data-position="x5y8"></shogi-piece>
-	<shogi-piece piece="s" data-position="x6y8"></shogi-piece>
-	<shogi-piece piece="n" data-position="x7y8"></shogi-piece>
-	<shogi-piece piece="l" data-position="x8y8"></shogi-piece>
+	<shogi-piece piece="p" data-position="x1y7"></shogi-piece>
+	<shogi-piece piece="p" data-position="x2y7"></shogi-piece>
+	<shogi-piece piece="p" data-position="x3y7"></shogi-piece>
+	<shogi-piece piece="p" data-position="x4y7"></shogi-piece>
+	<shogi-piece piece="p" data-position="x5y7"></shogi-piece>
+	<shogi-piece piece="p" data-position="x6y7"></shogi-piece>
+	<shogi-piece piece="p" data-position="x7y7"></shogi-piece>
+	<shogi-piece piece="p" data-position="x8y7"></shogi-piece>
+	<shogi-piece piece="p" data-position="x9y7"></shogi-piece>
+	<shogi-piece piece="b" data-position="x2y8"></shogi-piece>
+	<shogi-piece piece="r" data-position="x8y8"></shogi-piece>
+	<shogi-piece piece="l" data-position="x1y9"></shogi-piece>
+	<shogi-piece piece="n" data-position="x2y9"></shogi-piece>
+	<shogi-piece piece="s" data-position="x3y9"></shogi-piece>
+	<shogi-piece piece="g" data-position="x4y9"></shogi-piece>
+	<shogi-piece piece="k" data-position="x5y9"></shogi-piece>
+	<shogi-piece piece="g" data-position="x6y9"></shogi-piece>
+	<shogi-piece piece="s" data-position="x7y9"></shogi-piece>
+	<shogi-piece piece="n" data-position="x8y9"></shogi-piece>
+	<shogi-piece piece="l" data-position="x9y9"></shogi-piece>
+
+	<shogi-piece piece="p" slot='top' enemy></shogi-piece>
+	<shogi-piece piece="p" slot='bottom'></shogi-piece>
 </shogi-board></html-code>
+
+<h2>mine-sweeper</h2>
+<html-code change><mine-sweeper></mine-sweeper></html-code>
+
 </body>
 </html>

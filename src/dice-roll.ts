@@ -32,8 +32,6 @@ attributeChangedCallback()で監視しているので呼び出される
 changeイベントの発生
 */
 
-document.addEventListener( 'DOMContentLoaded', () => { DiceRoll.Init(); } );
-
 class DiceRoll extends HTMLElement
 {
 	public static Init( tagname = 'dice-roll' ) { customElements.define( tagname, this ); }
@@ -246,6 +244,9 @@ class DiceRoll extends HTMLElement
 	// 監視している属性が変化した時の対応です。
 	public attributeChangedCallback( attrName: string, oldVal: any , newVal: any )
 	{
+		// 更新がない場合は何もしないことにします。
+		if ( oldVal === newVal ) { return; }
+
 		switch ( attrName )
 		{
 			case 'min': this.onUpdateMin( newVal ); break;
@@ -254,3 +255,9 @@ class DiceRoll extends HTMLElement
 		}
 	}
 }
+
+( ( script ) =>
+{
+	if ( document.readyState !== 'loading' ) { return DiceRoll.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { DiceRoll.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript );

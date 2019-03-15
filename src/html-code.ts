@@ -6,11 +6,9 @@
 <html-code>表示したいHTMLコード</html-code>
 */
 
-document.addEventListener( 'DOMContentLoaded', () => { HTMLCode.Init(); } );
-
 class HTMLCode extends HTMLElement
 {
-	public static Init( tagname = 'html-code' ) { customElements.define( tagname, this ); }
+	public static Init( tagname = 'html-code' ) { if ( customElements.get( tagname ) ) { return; }　customElements.define( tagname, this ); }
 
 	private code: HTMLElement;
 
@@ -24,8 +22,8 @@ class HTMLCode extends HTMLElement
 		style.innerHTML = [
 			':host { display: block; width: 100%; height: fit-content; margin: 0.5rem 0; }',
 			':host > div { width: 100%; display: flex; justify-content: space-between; }',
-			':host > div > div { width: 49%; margin: 0; padding: 0.5em; box-sizing: border-box; border-radius: 0.5rem; border: 1px solid gray; }',
-			'pre { margin: 0; }',
+			':host > div > * { width: 49%; margin: 0; padding: 0.5em; box-sizing: border-box; border-radius: 0.5rem; border: 1px solid gray; }',
+			'pre { margin: 0; overflow: auto; }',
 		].join( '' );
 
 		const contents = document.createElement( 'div' );
@@ -63,6 +61,13 @@ class HTMLCode extends HTMLElement
 	{
 		// 設定されているコンテンツをそのままコードとして使います。
 		// innerHTMLをtextContentに入れることで、タグなどを無効化するブラウザ任せの実装です。
-		this.code.textContent = this.innerHTML;
+		// ただし、<my-tag flag></my-tag> が <my-tag flag=""></my-tag> になってしまうのでそこだけ修正します。
+		this.code.textContent = this.innerHTML.replace( /\=\"\"/g, '' );
 	}
 }
+
+( ( script ) =>
+{
+	if ( document.readyState !== 'loading' ) { return HTMLCode.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { HTMLCode.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript );

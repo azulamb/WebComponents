@@ -1,6 +1,8 @@
-document.addEventListener('DOMContentLoaded', () => { FavoriteButton.Init(); });
 class FavoriteButton extends HTMLElement {
     static Init(tagname = 'favorite-button') {
+        if (customElements.get(tagname)) {
+            return;
+        }
         customElements.define(tagname, this);
     }
     constructor() {
@@ -22,3 +24,9 @@ class FavoriteButton extends HTMLElement {
         shadow.appendChild(div);
     }
 }
+((script) => {
+    if (document.readyState !== 'loading') {
+        return FavoriteButton.Init(script.dataset.tagname);
+    }
+    document.addEventListener('DOMContentLoaded', () => { FavoriteButton.Init(script.dataset.tagname); });
+})(document.currentScript);

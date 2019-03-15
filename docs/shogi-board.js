@@ -1,4 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => { ShogiBoard.Init(); });
 class ShogiBoard extends GameBoard {
     static Init(tagname = 'shogi-board') { customElements.define(tagname, this); }
     initBoard() {
@@ -22,7 +21,42 @@ class ShogiBoard extends GameBoard {
         if (piece !== undefined) {
             piece.reverse = !!reverse;
         }
-        piece.dataset.position = 'x' + (x - 1) + 'y' + (y - 1);
+        piece.dataset.position = 'x' + x + 'y' + y;
         this.appendChild(piece);
     }
+    find(x, y) {
+        const element = this.querySelector('[ data-position="x' + Math.floor(x) + 'y' + Math.floor(y) + '" ]');
+        if (!element || element.tagName !== 'shogi-piece') {
+            return null;
+        }
+        return element;
+    }
+    move(x, y, mx, my) {
+        x = Math.floor(x);
+        y = Math.floor(y);
+        const piece = this.find(x, y);
+        if (!piece) {
+            return null;
+        }
+        mx = Math.floor(mx);
+        my = Math.floor(my);
+        piece.dataset.position = 'x' + mx + 'y' + my;
+        return piece;
+    }
+    capture(x, y, enemy) {
+        this.querySelectorAll('[ data-position="x' + Math.floor(x) + 'y' + Math.floor(y) + '" ]').forEach((piece) => {
+            if (piece.enemy === enemy) {
+                return;
+            }
+            piece.enemy = enemy;
+            piece.dataset.position = '';
+            piece.slot = enemy ? 'top' : 'bottom';
+        });
+    }
 }
+((script) => {
+    if (document.readyState !== 'loading') {
+        return ShogiBoard.Init(script.dataset.tagname);
+    }
+    document.addEventListener('DOMContentLoaded', () => { ShogiBoard.Init(script.dataset.tagname); });
+})(document.currentScript);

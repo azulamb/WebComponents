@@ -1,4 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => { GameBoard.Init(); });
 class GameBoard extends HTMLElement {
     constructor() {
         super();
@@ -11,22 +10,39 @@ class GameBoard extends HTMLElement {
         const style = document.createElement('style');
         style.innerHTML = [
             ':host { display: block; overflow: hidden; width: 100%; height: fit-content; --border-color: var( --border, black ); }',
-            ':host > div { width: 100%; padding: 100% 0 0; position: relative; overflow: hidden; }',
+            ':host > div.main { width: 100%; padding: 100% 0 0; position: relative; overflow: hidden; }',
+            ':host > div.top, :host > div.bottom { position: relative; width: 100%; height: fit-content; }',
+            ':host > div.top {}',
+            ':host > div.bottom {}',
             ':host > div > div { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }',
             'div.board { display: grid; box-sizing: border-box; border: 1px solid var( --border-color ); }',
             'div.board > div { width: 100%; height: 100%; border-right: 1px solid var( --border-color ); border-bottom: 1px solid var( --border-color ); }',
-            '::slotted( * ) { position: absolute; }',
+            '::slotted( :not( [slot] ) ) { position: absolute; transition: top 0.5s, left 0.5s; }',
+            '::slotted( [slot] ) { display: inline-block; }',
         ].join('');
         this.updateBoard();
         const contents = document.createElement('div');
         contents.classList.add('contents');
         contents.appendChild(document.createElement('slot'));
-        const parent = document.createElement('div');
-        parent.appendChild(this.board);
-        parent.appendChild(contents);
+        const main = document.createElement('div');
+        main.classList.add('main');
+        main.appendChild(this.board);
+        main.appendChild(contents);
+        const top = document.createElement('div');
+        top.classList.add('top');
+        const topslot = document.createElement('slot');
+        topslot.name = 'top';
+        top.appendChild(topslot);
+        const bottom = document.createElement('div');
+        bottom.classList.add('bottom');
+        const bottomslot = document.createElement('slot');
+        bottomslot.name = 'bottom';
+        bottom.appendChild(bottomslot);
         shadow.appendChild(style);
         shadow.appendChild(this.boardStyle);
-        shadow.appendChild(parent);
+        shadow.appendChild(top);
+        shadow.appendChild(main);
+        shadow.appendChild(bottom);
     }
     static Init(tagname = 'game-board') { customElements.define(tagname, this); }
     initBoard() {
@@ -42,26 +58,26 @@ class GameBoard extends HTMLElement {
         const width = this.width;
         const height = this.height;
         const styles = [];
-        styles.push('div.board { ' +
+        styles.push(':host > div.main { padding: calc( 100% * ' + height + ' / ' + width + ' ) 0 0; }', 'div.board { ' +
             'grid-template-columns: ' + Array(width).fill('1fr').join(' ') + '; ' +
             'grid-template-rows: ' + Array(height).fill('1fr').join(' ') + ';' +
-            ' }', '::slotted( * ) { width: calc( 100% / ' + width + ' ); height: calc( 100% / ' + height + ' ); }');
+            ' }', '::slotted( :not[ slot ] ) { width: calc( 100% / ' + width + ' ); height: calc( 100% / ' + height + ' ); }');
         this.colors.forEach((color) => {
             styles.push('div.board > div.' + color.name + ' { background-color: var( ' + color.var + ', ' + color.color + ' ); }');
         });
         for (let i = this.board.children.length - 1; 0 <= i; --i) {
             this.board.removeChild(this.board.children[i]);
         }
-        for (let y = 0; y < height; ++y) {
-            const row = 'grid-row: ' + (y + 1) + '/' + (y + 2) + ';';
-            for (let x = 0; x < width; ++x) {
+        for (let y = 1; y <= height; ++y) {
+            const row = 'grid-row: ' + y + '/' + (y + 1) + ';';
+            for (let x = 1; x <= width; ++x) {
                 const box = document.createElement('div');
                 const position = 'x' + x + 'y' + y;
                 box.dataset.position = position;
                 this.board.appendChild(box);
                 styles.push('div.board > [ data-position = "' + position + '" ] {' +
-                    'grid-column: ' + (x + 1) + '/' + (x + 2) + ';' + row +
-                    '}', '::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' + x + ' ) / ' + width + ' ); top: calc( 100% ' + ' * ' + y + ' / ' + height + ' ); }');
+                    'grid-column: ' + x + '/' + (x + 1) + ';' + row +
+                    '}', '::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' + (x - 1) + ' ) / ' + width + ' ); top: calc( 100% ' + ' * ' + (y - 1) + ' / ' + height + ' ); }');
             }
         }
         this.boardStyle.innerHTML = styles.join('');
@@ -98,7 +114,7 @@ class GameBoard extends HTMLElement {
         if (!box) {
             return 0;
         }
-        box.classList.remove('on');
+        colors.forEach((color) => { box.classList.remove(color); });
         return 1;
     }
     convertPositiveNumber(value) {
@@ -118,6 +134,7 @@ class GameBoard extends HTMLElement {
     onUpdateWidth(value) {
         if (this.width !== (typeof value === 'number' ? value : parseInt(value))) {
             this.width = value;
+            this.updateBoard();
             return;
         }
     }
@@ -126,11 +143,15 @@ class GameBoard extends HTMLElement {
     onUpdateHeight(value) {
         if (this.height !== (typeof value === 'number' ? value : parseInt(value))) {
             this.height = value;
+            this.updateBoard();
             return;
         }
     }
     static get observedAttributes() { return ['width', 'height']; }
     attributeChangedCallback(attrName, oldVal, newVal) {
+        if (oldVal === newVal) {
+            return;
+        }
         switch (attrName) {
             case 'width':
                 this.onUpdateWidth(newVal);
@@ -141,3 +162,9 @@ class GameBoard extends HTMLElement {
         }
     }
 }
+((script) => {
+    if (document.readyState !== 'loading') {
+        return GameBoard.Init(script.dataset.tagname);
+    }
+    document.addEventListener('DOMContentLoaded', () => { GameBoard.Init(script.dataset.tagname); });
+})(document.currentScript);

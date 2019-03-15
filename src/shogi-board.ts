@@ -1,11 +1,39 @@
 /* 将棋の盤面
 GameBoardを継承して、将棋の盤面を表示します。
 そのため、game-board.jsより後に読み込むようにしておきましょう。
-また、今回はrating-starsとは異なり、ShogiPieceありきで実装していきます。
+また、今回はrating-starsとは異なり、ShogiPieceありきで実装していきます。（めんどうなので。）
 
+使い方：
+<game-board>に入っている機能は省略します。
+<shogi-board></shogi-board>
+<shogi-board>
+	<shogi-piece></shogi-piece> ...
+</shogi-board>
+const element = new ShogiBoard();
+* element.setPiece( x: number, y: number, piece: ShogiPiece | string, enemy?: boolean, reverse?: boolean )
+    * 指定座標に<shogi-piece>を設置します。
+	* 第3引数が文字列の場合はその駒に応じた<shogi-piece>を作成します。
+	* 第4,5引数を指定した場合、更にその設定に上書きを行います。
+* fing( x: number, y: number ): ShogiPiece | null
+    * 指定座標の駒を返します。存在しない場合はnullを返します。
+* move( x: number, y: number, mx: number, my: number ): ShogiPiece | null
+    * (x,y)にある駒を(mx,my)に移動します。
+	* 駒が存在しない場合はnullを返します。
 */
 
-document.addEventListener( 'DOMContentLoaded', () => { ShogiBoard.Init(); } );
+// TODO:!!!!!!!!!!!!!!!!!
+/*
+　987654321
+一
+二
+三
+四
+五
+六
+七
+八
+九
+*/
 
 class ShogiBoard extends GameBoard
 {
@@ -28,7 +56,7 @@ class ShogiBoard extends GameBoard
 	// 将棋の駒を配置します。
 	// 使い方は setPiece( X座標, Y座標, 駒(ShogiPiece) ) か setPiece( X座標, Y座標, 駒名(string) ) です。 
 	// X座標とY座標は1から始まることを想定します。（将棋詳しくないけど12歩みたいな感じで読み上げてた気がする。）
-	public setPiece( x:number, y: number, piece: ShogiPiece|string, enemy?: boolean, reverse?: boolean )
+	public setPiece( x: number, y: number, piece: ShogiPiece | string, enemy?: boolean, reverse?: boolean )
 	{
 		if ( typeof piece === 'string' )
 		{
@@ -44,9 +72,54 @@ class ShogiBoard extends GameBoard
 		if ( piece !== undefined ) { piece.reverse = !!reverse; }
 
 		// 駒を配置します。
-		piece.dataset.position = 'x' + ( x - 1 ) + 'y' + ( y - 1);
+		piece.dataset.position = 'x' + x + 'y' + y;
 
 		// 将棋盤に駒を置きます。
 		this.appendChild( piece );
 	}
+
+	// 将棋の駒を探します。
+	public find( x: number, y: number )
+	{
+		const element = this.querySelector( '[ data-position="x' + Math.floor( x ) + 'y' + Math.floor( y ) + '" ]' );
+		if ( !element || element.tagName !== 'shogi-piece' ) { return null; }
+		return <ShogiBoard>element;
+	}
+
+	// 駒を移動します。
+	// 成ることができるよう、移動に成功した場合は駒を返します。
+	public move( x: number, y: number, mx: number, my: number )
+	{
+		x = Math.floor( x );
+		y = Math.floor( y );
+		const piece = this.find( x, y );
+		if ( !piece ) { return null; }
+
+		mx = Math.floor( mx );
+		my = Math.floor( my );
+		piece.dataset.position = 'x' + mx + 'y' + my;
+
+		return piece;
+	}
+
+	// 駒を取ります。
+	// 指定座標にある駒を対象の手持ちに加えます。
+	public capture( x: number, y: number, enemy: boolean )
+	{
+		this.querySelectorAll( '[ data-position="x' + Math.floor( x ) + 'y' + Math.floor( y ) + '" ]' ).forEach( ( piece: ShogiPiece ) =>
+		{
+			// 自分の味方は取りません。
+			if ( piece.enemy === enemy ) { return; }
+			// 敵は取って持ち駒にします。
+			piece.enemy = enemy;
+			piece.dataset.position = '';
+			piece.slot = enemy ? 'top' : 'bottom';
+		} );
+	}
 }
+
+( ( script ) =>
+{
+	if ( document.readyState !== 'loading' ) { return ShogiBoard.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { ShogiBoard.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript );

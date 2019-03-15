@@ -21,8 +21,6 @@ const element = new RatingStar();
     * 評価変更時に発生するイベントです。
 */
 
-document.addEventListener( 'DOMContentLoaded', () => { RatingStar.Init(); } );
-
 class RatingStar extends HTMLElement
 {
 	private static StarTag = 'favorite-button';
@@ -51,7 +49,6 @@ class RatingStar extends HTMLElement
 		style.innerHTML = [
 			':host { display: block; overflow: hidden; width: fit-content; height: fit-content; }',
 			':host > div { display: flex; }',
-
 		].join( '' );
 
 		this.stars = document.createElement( 'div' );
@@ -102,13 +99,12 @@ class RatingStar extends HTMLElement
 	// ★のタグを生成して返します。
 	private createStar()
 	{
-		// 本来は new FavoriteButton()を返すべきです。
-		// 今回は初期設定時点で別のタグを登録している可能性も考慮し、タグ名から生成しようと思います。
-		// ここでdocument.createElement()を使いたいところですが、これはCustom Elementsには対応していません。
-		// そこで力技として土台になるタグを動的に作り、その中にinerHTMLで無理やり作成します。
-		const div = document.createElement( 'div' );
-		div.innerHTML = '<' + RatingStar.StarTag + '></' + RatingStar.StarTag + '>';
-		return <HTMLElement>div.children[ 0 ];
+		// customElements.get( タグ名 ) でタグと関連付けられたコンストラクタを取得します。
+		// 後はnewすれば要素を作ることができます。
+		// undefinedが返ってくる可能性もありますが、すでに定義されていることは customElements.whenDefined() で確認できているので、チェックもなしに使います。
+		// 今回は on 属性以外はそんなに変わったところもないので、HTMLElmentを返すという想定にしています。
+		const Star = customElements.get( RatingStar.StarTag );
+		return <HTMLElement>new Star();
 	}
 
 	private convertPositiveNumber( value: number|string )
@@ -139,12 +135,9 @@ class RatingStar extends HTMLElement
 	// length属性が変化した場合の対応。
 	private onUpdateLength( value: string|number )
 	{
-		// 値チェック
-		if ( this.length !== ( typeof value === 'number' ? value : parseInt( value ) ) )
-		{
-			this.length = <number>value;
-			return;
-		}
+		this.length = <number>value;
+		// 星の数を更新します。
+		this.updateStars();
 	}
 
 	// ratingプロパティの追加。
@@ -171,14 +164,9 @@ class RatingStar extends HTMLElement
 	// rating属性が変化した時の対応です。
 	private onUpdateRating( value: string|number )
 	{
-		// 値チェック
-		if ( this.rating !== ( typeof value === 'number' ? value : parseInt( value ) ) )
-		{
-			this.rating = <number>value;
-			return;
-		}
+		this.rating = <number>value;
 
-		// 値が変わらないようなら変更を通知します。
+		// 変更を通知します。
 		this.dispatchEvent( new Event( 'change' ) );
 	}
 
@@ -186,10 +174,19 @@ class RatingStar extends HTMLElement
 
 	public attributeChangedCallback( attrName: string, oldVal: any , newVal: any )
 	{
+		// 更新がない場合は何もしないことにします。
+		if ( oldVal === newVal ) { return; }
+
 		switch ( attrName )
 		{
 			case 'length': this.onUpdateLength( newVal ); break;
 			case 'rating': this.onUpdateRating( newVal ); break;
 		}
-    }
+	}
 }
+
+( ( script ) =>
+{
+	if ( document.readyState !== 'loading' ) { return RatingStar.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { RatingStar.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript );

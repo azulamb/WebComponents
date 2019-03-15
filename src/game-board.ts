@@ -2,9 +2,35 @@
 ゲームの盤面を表示します。
 主にマスを等間隔に並べて、色つけなどをできるようにします。
 またこのクラスを継承して別の盤面も作れるような配慮もしておきます。
-*/
 
-document.addEventListener( 'DOMContentLoaded', () => { GameBoard.Init(); } );
+使い方：
+<shogi-board></shogi-board>
+<shogi-board width="WIDTH" height="HEIGHT" style="--border:BORDER;">
+	<CHILD /> ...
+</shogi-board>
+* WIDTH
+    * 盤の横のマスの数です。
+* HEIGHT
+    * 盤の縦のマスの数です。
+* BORDER
+    * 線の色です。
+* CHILD
+    * 子要素は駒として扱います。
+const element = new GameBoard();
+* element.width: number
+    * 盤の横のマスの数です。
+    * 代入すると横のマスの数をその数にします。
+* element.height: number
+    * 盤の縦のマスの数です。
+    * 代入すると縦のマスの数をその数にします。
+* element.select( x: number, y: number, ... colors: string[] )
+    * 指定した座標のマスに色を塗ります。色は盤面に設定された色名になります。
+	* 複数指定すると複数の指定を追加しますが、指定がない場合はデフォルトになります。
+* element.deselect( x: number, y: number, ... colors: string[] )
+    * 指定した座標のマスの色を消します。色は盤面に設定された色名になります。
+	* 複数指定すると複数の指定を追加しますが、指定がない場合はそのマスの色をすべて消します。
+
+*/
 
 class GameBoard extends HTMLElement
 {
@@ -39,18 +65,24 @@ class GameBoard extends HTMLElement
 			// 正方形を作る有名な方法があります。
 			// 横幅が決まっている時、paddingの上下に%指定で値を設定すると、横幅に対する割合が使われます。
 			// 横幅100%に対し、padding-top: 100%;は、高さ100%と同じ領域を持つことになります。
-			':host > div { width: 100%; padding: 100% 0 0; position: relative; overflow: hidden; }',
+			':host > div.main { width: 100%; padding: 100% 0 0; position: relative; overflow: hidden; }',
+			// 上と下に追加コンテンツを入れておける領域を用意しておきます。
+			':host > div.top, :host > div.bottom { position: relative; width: 100%; height: fit-content; }',
+			':host > div.top {}',
+			':host > div.bottom {}',
 			// 直下のコンテンツは全部同じスタイルにしておきます。
 			':host > div > div { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }',
 			// 盤面の変わらない設定です。
 			// 盤面全体を囲む線があります。
 			'div.board { display: grid; box-sizing: border-box; border: 1px solid var( --border-color ); }',
-			// マスには右と下に線があります。この指定のままだと一番右と下の線が外にはみ出るので、見た目的には内側にしか線がありません。
-			// 盤面全体の枠と合わせると、ちょうど同じ太さの線で区切ることができます。
+			// マスのスタイルです。
 			'div.board > div { width: 100%; height: 100%; border-right: 1px solid var( --border-color ); border-bottom: 1px solid var( --border-color ); }',
-			// slotで入れるコンテンツの設定です。
+			// <slot>で入れるコンテンツの設定です。
 			// ::slotted( セレクタ ) でslotが置き換わった後の要素に対してスタイルを設定できます。
-			'::slotted( * ) { position: absolute; }',
+			// ただし今回は名前指定のないもののみの指定を行います。
+			'::slotted( :not( [slot] ) ) { position: absolute; transition: top 0.5s, left 0.5s; }',
+			// <slot>には名前をつけることができ、名前がある場合はそこに配置されます。
+			'::slotted( [slot] ) { display: inline-block; }',
 		].join( '' );
 
 		// マス目を追加します。
@@ -61,13 +93,30 @@ class GameBoard extends HTMLElement
 		contents.classList.add( 'contents' );
 		contents.appendChild( document.createElement( 'slot' ) );
 
-		const parent = document.createElement( 'div' );
-		parent.appendChild( this.board );
-		parent.appendChild( contents );
+		// 盤面の要素
+		const main = document.createElement( 'div' );
+		main.classList.add( 'main' );
+		main.appendChild( this.board );
+		main.appendChild( contents );
+
+		// 上と下の要素
+		const top = document.createElement( 'div' );
+		top.classList.add( 'top' );
+		const topslot = document.createElement( 'slot' );
+		topslot.name = 'top';
+		top.appendChild( topslot );
+
+		const bottom = document.createElement( 'div' );
+		bottom.classList.add( 'bottom' );
+		const bottomslot = document.createElement( 'slot' );
+		bottomslot.name = 'bottom';
+		bottom.appendChild( bottomslot );
 
 		shadow.appendChild( style );
 		shadow.appendChild( this.boardStyle );
-		shadow.appendChild( parent );
+		shadow.appendChild( top );
+		shadow.appendChild( main );
+		shadow.appendChild( bottom );
 	}
 
 	// 盤面の初期設定を行います。
@@ -92,6 +141,9 @@ class GameBoard extends HTMLElement
 		const styles: string[] = [];
 
 		styles.push(
+			// 縦横の比率に合わせて盤全体の高さを決めます。
+			// 縦横同じなら高さは横幅100%に対して100%となり、横10に対し縦5の場合は50%になります。
+			':host > div.main { padding: calc( 100% * ' + height + ' / ' + width + ' ) 0 0; }',
 			'div.board { ' +
 			// 横に何マスあるかの指定です。width分の長さの配列を作って全部均等に分割するような記述にします。
 			'grid-template-columns: ' + Array( width ).fill( '1fr' ).join( ' ' ) + '; '+
@@ -99,7 +151,7 @@ class GameBoard extends HTMLElement
 			'grid-template-rows: '+ Array( height ).fill( '1fr' ).join( ' ' ) + ';' +
 			' }',
 			// 駒の大きさを指定しておきます。
-			'::slotted( * ) { width: calc( 100% / ' + width + ' ); height: calc( 100% / ' + height + ' ); }'
+			'::slotted( :not[ slot ] ) { width: calc( 100% / ' + width + ' ); height: calc( 100% / ' + height + ' ); }'
 		);
 
 		// マスが選択状態の時の設定です。
@@ -112,14 +164,15 @@ class GameBoard extends HTMLElement
 		// マス目を配置します。
 		// 面倒なので今持っているマスは全部破棄して、全て新しく作り直します。
 		for ( let i = this.board.children.length - 1 ; 0 <= i ; --i ) { this.board.removeChild( this.board.children[ i ] ); }
-		for ( let y = 0 ; y < height ; ++y )
+		for ( let y = 1 ; y <= height ; ++y )
 		{
-			const row = 'grid-row: ' + ( y + 1 ) + '/' + ( y + 2 ) + ';';
-			for ( let x = 0 ; x < width; ++x )
+			const row = 'grid-row: ' + y + '/' + ( y + 1 ) + ';';
+			for ( let x = 1 ; x <= width; ++x )
 			{
 				const box = document.createElement( 'div' );
 				// data-position="x[X座標]y[Y座標]" という値を設定し、見れるようにしておきます。
 				// 同時に、これが位置の指定にもなります。
+				// ちなみに座標は(1,1)から始まります。理由はボードゲームではあまり0からマスを数えないからです。
 				const position = 'x' + x + 'y' + y;
 				box.dataset.position = position;
 
@@ -129,9 +182,9 @@ class GameBoard extends HTMLElement
 				// スタイルに表示座標を追加します。
 				styles.push(
 					'div.board > [ data-position = "' + position + '" ] {' +
-					'grid-column: ' + ( x + 1 ) + '/' + ( x + 2 ) +';' + row +
+					'grid-column: ' + x + '/' + ( x + 1 ) +';' + row +
 					'}',
-					'::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' + x + ' ) / ' + width + ' ); top: calc( 100% ' + ' * ' + y + ' / ' + height + ' ); }'
+					'::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' + ( x - 1 ) + ' ) / ' + width + ' ); top: calc( 100% ' + ' * ' + ( y - 1 ) + ' / ' + height + ' ); }'
 				);
 			}
 		}
@@ -140,6 +193,7 @@ class GameBoard extends HTMLElement
 	}
 
 	// 指定座標のマスを選択状態にします。
+	// 座標は1から始まることとします。
 	public select( x: number, y: number, ...colors: string[] )
 	{
 		// 色指定がない場合はデフォルトで色を入れておきます。
@@ -184,7 +238,7 @@ class GameBoard extends HTMLElement
 		if ( !box ) { return 0; }
 
 		// 指定座標が見つかったので選択解除します。
-		box.classList.remove( 'on' );
+		colors.forEach( ( color ) => { box.classList.remove( color ); } );
 
 		return 1;
 	}
@@ -221,6 +275,7 @@ class GameBoard extends HTMLElement
 		if ( this.width !== ( typeof value === 'number' ? value : parseInt( value ) ) )
 		{
 			this.width = <number>value;
+			this.updateBoard();
 			return;
 		}
 	}
@@ -237,6 +292,7 @@ class GameBoard extends HTMLElement
 		if ( this.height !== ( typeof value === 'number' ? value : parseInt( value ) ) )
 		{
 			this.height = <number>value;
+			this.updateBoard();
 			return;
 		}
 	}
@@ -245,6 +301,9 @@ class GameBoard extends HTMLElement
 
 	public attributeChangedCallback( attrName: string, oldVal: any , newVal: any )
 	{
+		// 更新がない場合は何もしないことにします。
+		if ( oldVal === newVal ) { return; }
+
 		switch ( attrName )
 		{
 			case 'width': this.onUpdateWidth( newVal ); break;
@@ -252,3 +311,9 @@ class GameBoard extends HTMLElement
 		}
 	}
 }
+
+( ( script ) =>
+{
+	if ( document.readyState !== 'loading' ) { return GameBoard.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { GameBoard.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript );

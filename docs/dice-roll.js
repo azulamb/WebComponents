@@ -1,4 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => { DiceRoll.Init(); });
 class DiceRoll extends HTMLElement {
     constructor() {
         super();
@@ -108,6 +107,9 @@ class DiceRoll extends HTMLElement {
     }
     static get observedAttributes() { return ['min', 'max', 'dice']; }
     attributeChangedCallback(attrName, oldVal, newVal) {
+        if (oldVal === newVal) {
+            return;
+        }
         switch (attrName) {
             case 'min':
                 this.onUpdateMin(newVal);
@@ -121,3 +123,9 @@ class DiceRoll extends HTMLElement {
         }
     }
 }
+((script) => {
+    if (document.readyState !== 'loading') {
+        return DiceRoll.Init(script.dataset.tagname);
+    }
+    document.addEventListener('DOMContentLoaded', () => { DiceRoll.Init(script.dataset.tagname); });
+})(document.currentScript);

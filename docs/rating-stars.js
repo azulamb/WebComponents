@@ -1,4 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => { RatingStar.Init(); });
 class RatingStar extends HTMLElement {
     constructor() {
         super();
@@ -41,9 +40,8 @@ class RatingStar extends HTMLElement {
         }
     }
     createStar() {
-        const div = document.createElement('div');
-        div.innerHTML = '<' + RatingStar.StarTag + '></' + RatingStar.StarTag + '>';
-        return div.children[0];
+        const Star = customElements.get(RatingStar.StarTag);
+        return new Star();
     }
     convertPositiveNumber(value) {
         if (typeof value !== 'number') {
@@ -60,10 +58,8 @@ class RatingStar extends HTMLElement {
     get length() { return this.convertPositiveNumber(this.getAttribute('length') || ''); }
     set length(value) { this.setAttribute('length', this.convertPositiveNumber(value) + ''); }
     onUpdateLength(value) {
-        if (this.length !== (typeof value === 'number' ? value : parseInt(value))) {
-            this.length = value;
-            return;
-        }
+        this.length = value;
+        this.updateStars();
     }
     get rating() { return this.convertPositiveNumber(this.getAttribute('rating') || ''); }
     set rating(value) {
@@ -80,14 +76,14 @@ class RatingStar extends HTMLElement {
         this.setAttribute('rating', rating + '');
     }
     onUpdateRating(value) {
-        if (this.rating !== (typeof value === 'number' ? value : parseInt(value))) {
-            this.rating = value;
-            return;
-        }
+        this.rating = value;
         this.dispatchEvent(new Event('change'));
     }
     static get observedAttributes() { return ['length', 'rating']; }
     attributeChangedCallback(attrName, oldVal, newVal) {
+        if (oldVal === newVal) {
+            return;
+        }
         switch (attrName) {
             case 'length':
                 this.onUpdateLength(newVal);
@@ -99,3 +95,9 @@ class RatingStar extends HTMLElement {
     }
 }
 RatingStar.StarTag = 'favorite-button';
+((script) => {
+    if (document.readyState !== 'loading') {
+        return RatingStar.Init(script.dataset.tagname);
+    }
+    document.addEventListener('DOMContentLoaded', () => { RatingStar.Init(script.dataset.tagname); });
+})(document.currentScript);

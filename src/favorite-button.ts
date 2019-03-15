@@ -14,15 +14,20 @@ const element = new FavoriteButton();
     * 変更時に発生するイベントです。
 */
 
-// カスタムタグの登録を行います。
-document.addEventListener( 'DOMContentLoaded', () => { FavoriteButton.Init(); } );
-
 class FavoriteButton extends HTMLElement
 {
 	// タグの登録やその前後になにかする必要がある場合に行う処理。
 	public static Init( tagname = 'favorite-button' )
 	{
 		// このタグを登録する処理を書いておきます。
+
+		// customElements.get( タグ名 ) を実行すると、タグが定義されている場合にコンストラクタを返します。
+		// const element = new ( customElements.get( タグ名 ) )();
+		// 上のような使い方が可能ですが、定義されていない場合は undefined を返します。
+		// これを利用して、定義済みの場合は処理を終わらせます。
+		// ちなみに無くとも良いですが、多重定義時にはエラーが表示されます。
+		if ( customElements.get( tagname ) ) { return; }
+
 		// 本来は以下のように書きます。
 		//customElements.define( tagname, FavoriteButton );
 		// このようにクラス内のstaticな場所に記述しておくと、thisで済むのでコピペができて大変楽です。
@@ -86,3 +91,18 @@ class FavoriteButton extends HTMLElement
 		*/
 	}
 }
+
+( ( script ) =>
+{
+	// script === document.currentScriptは、現在このJavaScriptを読み込んでいる<script>が格納されています。
+	// しかし、この値は読み込んだ直後に実行される処理でしか見れず、ロードイベント後などに参照するとnullになってしまいます。
+	// このように即時関数の引数等して与えれば、この中ではscriptという変数として生き残るので、このようにしています。
+	// 例えば <script src="./html-code.js" data-tagname="star-btn"></script> のようにdataset経由で設定を読み込み時に与えることができます。
+
+	// DOMContentLoaded はページロード後に実行されますが、もしロード後にイベントを登録するとこのイベントは実行されません。
+	// しかしこの後でないとエラーを起こします。
+	// そこで、document.readyStateを見ます。これがloadingならばまだDOMContentLoadedイベントが発生していません。
+	// これを利用して、loadingで無いならば即初期化処理を行い、そうでない場合はDOMContentLoadedイベントに初期化処理を登録します。
+	if ( document.readyState !== 'loading' ) { return FavoriteButton.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { FavoriteButton.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript );

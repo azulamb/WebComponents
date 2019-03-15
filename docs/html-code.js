@@ -1,6 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => { HTMLCode.Init(); });
 class HTMLCode extends HTMLElement {
-    static Init(tagname = 'html-code') { customElements.define(tagname, this); }
+    static Init(tagname = 'html-code') { if (customElements.get(tagname)) {
+        return;
+    } customElements.define(tagname, this); }
     constructor() {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
@@ -8,8 +9,8 @@ class HTMLCode extends HTMLElement {
         style.innerHTML = [
             ':host { display: block; width: 100%; height: fit-content; margin: 0.5rem 0; }',
             ':host > div { width: 100%; display: flex; justify-content: space-between; }',
-            ':host > div > div { width: 49%; margin: 0; padding: 0.5em; box-sizing: border-box; border-radius: 0.5rem; border: 1px solid gray; }',
-            'pre { margin: 0; }',
+            ':host > div > * { width: 49%; margin: 0; padding: 0.5em; box-sizing: border-box; border-radius: 0.5rem; border: 1px solid gray; }',
+            'pre { margin: 0; overflow: auto; }',
         ].join('');
         const contents = document.createElement('div');
         const view = document.createElement('div');
@@ -30,6 +31,12 @@ class HTMLCode extends HTMLElement {
         shadow.appendChild(contents);
     }
     updateCode() {
-        this.code.textContent = this.innerHTML;
+        this.code.textContent = this.innerHTML.replace(/\=\"\"/g, '');
     }
 }
+((script) => {
+    if (document.readyState !== 'loading') {
+        return HTMLCode.Init(script.dataset.tagname);
+    }
+    document.addEventListener('DOMContentLoaded', () => { HTMLCode.Init(script.dataset.tagname); });
+})(document.currentScript);

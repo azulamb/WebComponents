@@ -23,8 +23,6 @@
     * 駒の大きさです。デフォルトは2remです。
 */
 
-document.addEventListener( 'DOMContentLoaded', () => { ShogiPiece.Init(); } );
-
 class ShogiPiece extends HTMLElement
 {
 	public static Init( tagname = 'shogi-piece' ) { customElements.define( tagname, this ); }
@@ -170,3 +168,9 @@ class ShogiPiece extends HTMLElement
 		}
 	}
 }
+
+( ( script ) =>
+{
+	if ( document.readyState !== 'loading' ) { return ShogiPiece.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { ShogiPiece.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript );

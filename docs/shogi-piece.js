@@ -1,4 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => { ShogiPiece.Init(); });
 class ShogiPiece extends HTMLElement {
     constructor() {
         super();
@@ -62,3 +61,9 @@ ShogiPiece.Pieces = [
     { print: '香', reverse: '仝', names: ['lance', 'l', '香'] },
     { print: '歩', reverse: 'と', names: ['pawn', 'p', '歩'] },
 ];
+((script) => {
+    if (document.readyState !== 'loading') {
+        return ShogiPiece.Init(script.dataset.tagname);
+    }
+    document.addEventListener('DOMContentLoaded', () => { ShogiPiece.Init(script.dataset.tagname); });
+})(document.currentScript);

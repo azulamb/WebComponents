@@ -26,6 +26,7 @@ class MineSweeper extends HTMLElement {
     }
     initHeader(width, height, bombs) {
         const header = document.createElement('header');
+        this.maxbombs = bombs;
         function createNumInput(value) {
             const input = document.createElement('input');
             input.type = 'number';
@@ -56,12 +57,13 @@ class MineSweeper extends HTMLElement {
         return this.board;
     }
     calcBombs(width, height) {
-        const bombs = Math.floor(width * height * 0.3);
+        const bombs = Math.floor(width * height * 0.5);
         return bombs <= 0 ? 1 : bombs;
     }
     createBlock(x, y) {
         const block = new (customElements.get(MineSweeper.Block))(x, y);
-        block.addEventListener('open', (event) => { this.open(event.x, event.y); });
+        block.addEventListener('open', (event) => { this.open(event.detail.x, event.detail.y); });
+        block.addEventListener('flag', (event) => { this.flag(event.detail.x, event.detail.y); });
         return block;
     }
     updateBoard() {
@@ -76,12 +78,9 @@ class MineSweeper extends HTMLElement {
                 'grid-template-rows: ' + Array(height).fill('1fr').join(' ') + ';' +
                 ' }',
         ];
-        const blocks = [];
-        for (let y = 1; y <= height; ++y) {
-            for (let x = 1; x <= width; ++x) {
-                const block = this.createBlock(x, y);
-                blocks.push(block);
-                this.board.appendChild(block);
+        for (let y = 0; y < height; ++y) {
+            for (let x = 0; x < width; ++x) {
+                this.board.appendChild(this.createBlock(x, y));
             }
         }
         this.boardStyle.innerHTML = styles.join('');
@@ -92,11 +91,88 @@ class MineSweeper extends HTMLElement {
     }
     play(x, y) {
         this.setAttribute('play', '');
+        const blocks = Array.from(this.board.children).filter((block) => {
+            return !block.isOpen();
+        });
+        for (let i = blocks.length - 1; 0 < i; --i) {
+            const r = Math.floor(Math.random() * (i + 1));
+            [blocks[i], blocks[r]] = [blocks[r], blocks[i]];
+        }
+        this.maxbombs = Math.min(parseInt(this.bombs.value), blocks.length);
+        for (let b = 0; b < this.maxbombs; ++b) {
+            blocks[b].setBomb();
+        }
     }
     open(x, y) {
         if (!this.hasAttribute('play')) {
             this.play(x, y);
         }
+        const width = parseInt(this.width.value);
+        const height = parseInt(this.height.value);
+        const blocks = Array.from(this.board.children);
+        if (blocks[y * width + x].isBomb()) {
+            return this.gameover();
+        }
+        const nobombs = this.getCanOpenBlocks(blocks, x, y, width, height);
+        nobombs.push(blocks[y * width + x]);
+        nobombs.forEach((block) => {
+            block.open(this.countBombs(blocks, block.getX(), block.getY(), width, height));
+        });
+    }
+    flag(x, y) {
+        if (!this.hasAttribute('play')) {
+            return;
+        }
+        const flags = this.board.querySelectorAll('[ flag ]:not([ open ])').length;
+        const bombs = this.maxbombs - flags;
+        this.bombs.value = bombs + '';
+    }
+    gameover() { }
+    getCanOpenBlocks(blocks, x, y, width, height) {
+        const nobombs = [];
+        const search = [blocks[y * width + x]];
+        do {
+            const block = search.shift();
+            const x = block.getX();
+            const y = block.getY();
+            let b = blocks[(y - 1) * width + x];
+            if (0 < y && nobombs.indexOf(b) < 0 && !b.isBomb() && !b.isOpen() && !b.hasFlag()) {
+                search.push(b);
+                nobombs.push(b);
+            }
+            b = blocks[(y + 1) * width + x];
+            if (y + 1 < height && nobombs.indexOf(b) < 0 && !b.isBomb() && !b.isOpen() && !b.hasFlag()) {
+                search.push(b);
+                nobombs.push(b);
+            }
+            b = blocks[y * width + x - 1];
+            if (0 < x && nobombs.indexOf(b) < 0 && !b.isBomb() && !b.isOpen() && !b.hasFlag()) {
+                search.push(b);
+                nobombs.push(b);
+            }
+            b = blocks[y * width + x + 1];
+            if (x + 1 < width && nobombs.indexOf(b) < 0 && !b.isBomb() && !b.isOpen() && !b.hasFlag()) {
+                search.push(b);
+                nobombs.push(b);
+            }
+        } while (0 < search.length);
+        return nobombs;
+    }
+    countBombs(blocks, x, y, width, height) {
+        let count = 0;
+        const w = Math.min(x + 2, width);
+        const h = Math.min(y + 2, height);
+        for (let b = Math.max(y - 1, 0); b < h; ++b) {
+            for (let a = Math.max(x - 1, 0); a < w; ++a) {
+                if (a === x && b === y) {
+                    continue;
+                }
+                if (blocks[b * width + a].isBomb()) {
+                    ++count;
+                }
+            }
+        }
+        return count;
     }
 }
 MineSweeper.Block = 'mine-block';
@@ -106,16 +182,26 @@ class MineBlock extends HTMLElement {
         this.bomb = false;
         this.x = x;
         this.y = y;
-        this.style.gridColumn = x + '/' + (x + 1);
-        this.style.gridRow = y + '/' + (y + 1);
+        this.style.gridColumn = (x + 1) + '/' + (x + 2);
+        this.style.gridRow = (y + 1) + '/' + (y + 2);
         const shadow = this.attachShadow({ mode: 'open' });
         const style = document.createElement('style');
         style.innerHTML = [
-            ':host { display: block; width: 100%; height: fit-content; --m-flag: var( --mine-flag, "🚩" ); }',
+            ':host { display: block; width: 100%; height: fit-content; --m-flag: var( --mine-flag, "🚩" ); --m-bomb: var( --mine-bomb, "💣" ); --f-size: 1rem; }',
             ':host > div { display: block; width: 100%; padding-top: 100%; position: relative; box-sizing: border-box; overflow: hidden; }',
             ':host > div > button { display: block; cursor: pointer; width: 100%; height: 100%; position: absolute; top: 0; left: 0; }',
             ':host([ flag ]) button:before { content: var( --m-flag ); }',
             ':host([ open ]) > div > button { display: none; }',
+            ':host([ bombs ]) > div:after { display: block; position: absolute; width: var( --f-size ); height: var( --f-size ); top: 0; bottom: 0; left: 0; right: 0; margin: auto; }',
+            ':host([ bombs = "1" ]) > div:after { content: "1"; }',
+            ':host([ bombs = "2" ]) > div:after { content: "2"; }',
+            ':host([ bombs = "3" ]) > div:after { content: "3"; }',
+            ':host([ bombs = "4" ]) > div:after { content: "4"; }',
+            ':host([ bombs = "5" ]) > div:after { content: "5"; }',
+            ':host([ bombs = "6" ]) > div:after { content: "6"; }',
+            ':host([ bombs = "7" ]) > div:after { content: "7"; }',
+            ':host([ bombs = "8" ]) > div:after { content: "8"; }',
+            ':host([ bombs = "B" ]) > div:after { content: var( --m-bomb ); }',
         ].join('');
         const block = document.createElement('button');
         let timer = 0;
@@ -147,10 +233,20 @@ class MineBlock extends HTMLElement {
     getY() { return this.y; }
     setBomb() { this.bomb = true; }
     isBomb() { return this.bomb; }
-    open() {
+    isOpen() { return this.hasAttribute('open'); }
+    hasFlag() { return this.hasAttribute('flag'); }
+    open(bombs) {
         this.setAttribute('open', '');
-        const event = new CustomEvent('open', { detail: { x: this.x, y: this.y } });
-        this.dispatchEvent(event);
+        if (this.isBomb()) {
+            this.setAttribute('bombs', 'B');
+        }
+        if (bombs !== undefined) {
+            this.setAttribute('bombs', bombs + '');
+        }
+        else {
+            const event = new CustomEvent('open', { detail: { x: this.x, y: this.y } });
+            this.dispatchEvent(event);
+        }
     }
     flag() {
         if (this.hasAttribute('flag')) {
@@ -159,6 +255,8 @@ class MineBlock extends HTMLElement {
         else {
             this.setAttribute('flag', '');
         }
+        const event = new CustomEvent('flag', { detail: { x: this.x, y: this.y } });
+        this.dispatchEvent(event);
     }
 }
 MineBlock.LONGTIME = 500;

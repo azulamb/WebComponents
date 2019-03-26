@@ -1,5 +1,10 @@
 class ShogiBoard extends GameBoard {
-    static Init(tagname = 'shogi-board') { customElements.define(tagname, this); }
+    static Init(tagname = 'shogi-board') {
+        if (customElements.get(tagname)) {
+            return;
+        }
+        customElements.define(tagname, this);
+    }
     initBoard() {
         if (!this.hasAttribute('width')) {
             this.width = 9;
@@ -8,6 +13,12 @@ class ShogiBoard extends GameBoard {
             this.height = 9;
         }
         this.colors = [{ name: 'on', var: 'select', color: 'rgba(137, 157, 255, 0.5)' }];
+    }
+    addPieceStyle(styles, position, x, y) {
+        styles.push('div.board > [ data-position = "' + position + '" ] {' +
+            'grid-column: -' + x + '/-' + (x + 1) + ';grid-row: -' + y + '/-' + (y + 1) + ';' +
+            '}', '::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' +
+            (this.width - x) + ' ) / ' + this.width + ' ); top: calc( 100% ' + ' * ' + (y - 1) + ' / ' + this.height + ' ); }');
     }
     setPiece(x, y, piece, enemy, reverse) {
         if (typeof piece === 'string') {
@@ -54,9 +65,9 @@ class ShogiBoard extends GameBoard {
         });
     }
 }
-((script) => {
+((script, wc) => {
     if (document.readyState !== 'loading') {
-        return ShogiBoard.Init(script.dataset.tagname);
+        return wc.Init(script.dataset.tagname);
     }
-    document.addEventListener('DOMContentLoaded', () => { ShogiBoard.Init(script.dataset.tagname); });
-})(document.currentScript);
+    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
+})(document.currentScript, ShogiBoard);

@@ -34,7 +34,11 @@ changeイベントの発生
 
 class DiceRoll extends HTMLElement
 {
-	public static Init( tagname = 'dice-roll' ) { customElements.define( tagname, this ); }
+	public static Init( tagname = 'dice-roll' )
+	{
+		if ( customElements.get( tagname ) ) { return; }
+		customElements.define( tagname, this );
+	}
 
 	// ダイスを回しているタイマーです。
 	private timer: number = 0;
@@ -49,7 +53,8 @@ class DiceRoll extends HTMLElement
 		const shadow = this.attachShadow( { mode: 'open' } );
 
 		const style = document.createElement( 'style' );
-		style.innerHTML = [
+		style.innerHTML =
+		[
 			// スタイルフックを使って大きさを調整できるようにします。
 			// ただし今回は色んな所で使うので、--sizeを指定されていた場合はそれを使い、そうでない場合はデフォルト値を使う実装にします。
 			// デフォルト値を何度も書くのは嫌なので、外からは--sizeでサイズを送ってもらい、内部では--dice-sizeに代入して使います。ない場合はこの--dice-sizeにデフォルト値が入る仕組みです。
@@ -256,8 +261,8 @@ class DiceRoll extends HTMLElement
 	}
 }
 
-( ( script ) =>
+( ( script, wc ) =>
 {
-	if ( document.readyState !== 'loading' ) { return DiceRoll.Init( script.dataset.tagname ); }
-	document.addEventListener( 'DOMContentLoaded', () => { DiceRoll.Init( script.dataset.tagname ); } );
-} )( <HTMLScriptElement>document.currentScript );
+	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript, DiceRoll );

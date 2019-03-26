@@ -6,16 +6,17 @@ class DiceRoll extends HTMLElement {
         this._max = 6;
         const shadow = this.attachShadow({ mode: 'open' });
         const style = document.createElement('style');
-        style.innerHTML = [
-            ':host { display: inline-block; cursor: pointer; overflow: hidden; --dice-size: var( --size, 2rem ); width: var( --dice-size ); height: var( --dice-size ); color: var( --color ); }',
-            ':host > div { text-align: center; }',
-            ':host > div::before { content: "⚀"; font-size: var( --dice-size ); line-height: var( --dice-size ); font-family: var( --font ); }',
-            ':host( [ dice="2" ] ) > div::before { content: "⚁"; }',
-            ':host( [ dice="3" ] ) > div::before { content: "⚂"; }',
-            ':host( [ dice="4" ] ) > div::before { content: "⚃"; }',
-            ':host( [ dice="5" ] ) > div::before { content: "⚄"; }',
-            ':host( [ dice="6" ] ) > div::before { content: "⚅"; }',
-        ].join('');
+        style.innerHTML =
+            [
+                ':host { display: inline-block; cursor: pointer; overflow: hidden; --dice-size: var( --size, 2rem ); width: var( --dice-size ); height: var( --dice-size ); color: var( --color ); }',
+                ':host > div { text-align: center; }',
+                ':host > div::before { content: "⚀"; font-size: var( --dice-size ); line-height: var( --dice-size ); font-family: var( --font ); }',
+                ':host( [ dice="2" ] ) > div::before { content: "⚁"; }',
+                ':host( [ dice="3" ] ) > div::before { content: "⚂"; }',
+                ':host( [ dice="4" ] ) > div::before { content: "⚃"; }',
+                ':host( [ dice="5" ] ) > div::before { content: "⚄"; }',
+                ':host( [ dice="6" ] ) > div::before { content: "⚅"; }',
+            ].join('');
         const div = document.createElement('div');
         div.addEventListener('click', () => {
             if (this.roll()) {
@@ -35,7 +36,12 @@ class DiceRoll extends HTMLElement {
         shadow.appendChild(style);
         shadow.appendChild(div);
     }
-    static Init(tagname = 'dice-roll') { customElements.define(tagname, this); }
+    static Init(tagname = 'dice-roll') {
+        if (customElements.get(tagname)) {
+            return;
+        }
+        customElements.define(tagname, this);
+    }
     roll() {
         if (this.timer) {
             return false;
@@ -123,9 +129,9 @@ class DiceRoll extends HTMLElement {
         }
     }
 }
-((script) => {
+((script, wc) => {
     if (document.readyState !== 'loading') {
-        return DiceRoll.Init(script.dataset.tagname);
+        return wc.Init(script.dataset.tagname);
     }
-    document.addEventListener('DOMContentLoaded', () => { DiceRoll.Init(script.dataset.tagname); });
-})(document.currentScript);
+    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
+})(document.currentScript, DiceRoll);

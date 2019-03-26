@@ -29,7 +29,12 @@ class ShogiPiece extends HTMLElement {
         shadow.appendChild(style);
         shadow.appendChild(div);
     }
-    static Init(tagname = 'shogi-piece') { customElements.define(tagname, this); }
+    static Init(tagname = 'shogi-piece') {
+        if (customElements.get(tagname)) {
+            return;
+        }
+        customElements.define(tagname, this);
+    }
     get piece() { return this.getAttribute('piece') || ''; }
     set piece(value) { this.setAttribute('piece', value); }
     get enemy() { return this.hasAttribute('enemy'); }
@@ -61,9 +66,9 @@ ShogiPiece.Pieces = [
     { print: '香', reverse: '仝', names: ['lance', 'l', '香'] },
     { print: '歩', reverse: 'と', names: ['pawn', 'p', '歩'] },
 ];
-((script) => {
+((script, wc) => {
     if (document.readyState !== 'loading') {
-        return ShogiPiece.Init(script.dataset.tagname);
+        return wc.Init(script.dataset.tagname);
     }
-    document.addEventListener('DOMContentLoaded', () => { ShogiPiece.Init(script.dataset.tagname); });
-})(document.currentScript);
+    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
+})(document.currentScript, ShogiPiece);

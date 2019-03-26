@@ -11,6 +11,7 @@ class MineSweeper extends HTMLElement
 
 	public static Init( tagname = 'mine-sweeper', block = MineSweeper.Block )
 	{
+		if ( customElements.get( tagname ) ) { return; }
 		// 内部で使うブロックを先に定義します。
 		MineSweeper.Block = block;
 		MineBlock.Init( block );
@@ -28,9 +29,11 @@ class MineSweeper extends HTMLElement
 		style.innerHTML = [
 			':host { display: block; width: 100%; height: fit-content; --mine-flag: "🚩"; }',
 			'input { width: 4em; }',
+			':host > div { display: grid; }',
 			// プレイ中は設定に触れないようにします。
 			':host( [ play ] ) > header > input { pointer-events: none; }',
-			':host > div { display: grid; }',
+			// ゲームが終了した場合はブロックのクリック判定を消します。
+			':host( [ game ] ) > div > * { pointer-events: none; }',
 		].join( '' );
 
 		this.boardStyle = document.createElement( 'style' );
@@ -198,6 +201,13 @@ class MineSweeper extends HTMLElement
 			return this.gameover();
 		}
 
+		// 残っているブロックと爆弾の数を比較します。
+		if ( this.countBlock( blocks ) === this.maxbombs )
+		{
+			// ゲームクリア処理をします。
+			return this.gameclear();
+		}
+
 		// 開いた場所に連なる爆弾なしブロックを列挙します。
 		const nobombs = this.getCanOpenBlocks( blocks, x, y, width, height );
 		// 開いた場所に数値があるかもしれないので、nobombsに追加しておきます。
@@ -221,7 +231,9 @@ class MineSweeper extends HTMLElement
 		this.bombs.value = bombs + '';
 	}
 
-	public gameover(){}
+	public gameover() { this.setAttribute( 'game', 'over' ); }
+
+	public gameclear() { this.setAttribute( 'game', 'clear' ); }
 
 	public getCanOpenBlocks( blocks: MineBlock[], x: number, y: number, width: number, height: number )
 	{
@@ -270,10 +282,14 @@ class MineSweeper extends HTMLElement
 	public countBombs( blocks: MineBlock[], x: number, y: number, width: number, height: number )
 	{
 		// 周囲の爆弾の数を数えます。
+		// 範囲は自分のいるところの-1～+1に加え、横幅や高さの範囲内であることが必要です。
+		// そこで、開始点-1と0のより大きい方～開始点+1と横幅や高さのより小さい方の間でを探します。
 		let count = 0;
+		// 大きい方の比較は < を使うので、正確には+1ではなく+2します。
 		const w = Math.min( x + 2, width );
 		const h = Math.min( y + 2, height );
 
+		// 小さい方の開始点はそこから始まるので現在の座標-1と0を比較します。
 		for ( let b = Math.max( y - 1, 0 ) ; b < h ; ++b )
 		{
 			for ( let a = Math.max( x - 1, 0 ) ; a < w ; ++a )
@@ -283,6 +299,13 @@ class MineSweeper extends HTMLElement
 			}
 		}
 
+		return count;
+	}
+
+	public countBlock( blocks: MineBlock[] )
+	{
+		let count = 0;
+		blocks.forEach( ( block ) => { if ( !block.isOpen() ) { ++count; } } );
 		return count;
 	}
 }
@@ -420,8 +443,8 @@ class MineBlock extends HTMLElement
 	}
 }
 
-( ( script ) =>
+( ( script, wc ) =>
 {
-	if ( document.readyState !== 'loading' ) { return MineSweeper.Init( script.dataset.tagname, script.dataset.blockname ); }
-	document.addEventListener( 'DOMContentLoaded', () => { MineSweeper.Init( script.dataset.tagname, script.dataset.blockname ); } );
-} )( <HTMLScriptElement>document.currentScript );
+	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname, script.dataset.blockname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname, script.dataset.blockname ); } );
+} )( <HTMLScriptElement>document.currentScript, MineSweeper );

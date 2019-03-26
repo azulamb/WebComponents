@@ -37,7 +37,11 @@ const element = new ShogiBoard();
 
 class ShogiBoard extends GameBoard
 {
-	public static Init( tagname = 'shogi-board' ) { customElements.define( tagname, this ); }
+	public static Init( tagname = 'shogi-board' )
+	{
+		if ( customElements.get( tagname ) ) { return; }
+		customElements.define( tagname, this );
+	}
 
 	// 今回constructor()は省略します。
 	// 初期化でいじりたい部分はinitBoard()に集約しているので、オーバーライドして最小の労力で将棋の盤面を作ります。
@@ -51,6 +55,17 @@ class ShogiBoard extends GameBoard
 
 		// 色は1色用意しておきます。
 		this.colors = [ { name: 'on', var: 'select', color: 'rgba(137, 157, 255, 0.5)' } ];
+	}
+
+	protected addPieceStyle( styles: string[], position: string, x: number, y: number )
+	{
+		styles.push(
+			'div.board > [ data-position = "' + position + '" ] {' +
+			'grid-column: -' + x + '/-' + ( x + 1 ) +';grid-row: -' + y + '/-' + ( y + 1 ) + ';' +
+			'}',
+			'::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' +
+			( this.width - x ) + ' ) / ' + this.width + ' ); top: calc( 100% ' + ' * ' + ( y - 1 ) + ' / ' + this.height + ' ); }'
+		);
 	}
 
 	// 将棋の駒を配置します。
@@ -118,8 +133,8 @@ class ShogiBoard extends GameBoard
 	}
 }
 
-( ( script ) =>
+( ( script, wc ) =>
 {
-	if ( document.readyState !== 'loading' ) { return ShogiBoard.Init( script.dataset.tagname ); }
-	document.addEventListener( 'DOMContentLoaded', () => { ShogiBoard.Init( script.dataset.tagname ); } );
-} )( <HTMLScriptElement>document.currentScript );
+	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript, ShogiBoard );

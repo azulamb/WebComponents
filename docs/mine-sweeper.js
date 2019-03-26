@@ -6,8 +6,9 @@ class MineSweeper extends HTMLElement {
         style.innerHTML = [
             ':host { display: block; width: 100%; height: fit-content; --mine-flag: "🚩"; }',
             'input { width: 4em; }',
-            ':host( [ play ] ) > header > input { pointer-events: none; }',
             ':host > div { display: grid; }',
+            ':host( [ play ] ) > header > input { pointer-events: none; }',
+            ':host( [ game ] ) > div > * { pointer-events: none; }',
         ].join('');
         this.boardStyle = document.createElement('style');
         const width = parseInt(this.getAttribute('width') || '');
@@ -20,6 +21,9 @@ class MineSweeper extends HTMLElement {
         this.reset();
     }
     static Init(tagname = 'mine-sweeper', block = MineSweeper.Block) {
+        if (customElements.get(tagname)) {
+            return;
+        }
         MineSweeper.Block = block;
         MineBlock.Init(block);
         customElements.whenDefined(block).then(() => { customElements.define(tagname, this); });
@@ -113,6 +117,9 @@ class MineSweeper extends HTMLElement {
         if (blocks[y * width + x].isBomb()) {
             return this.gameover();
         }
+        if (this.countBlock(blocks) === this.maxbombs) {
+            return this.gameclear();
+        }
         const nobombs = this.getCanOpenBlocks(blocks, x, y, width, height);
         nobombs.push(blocks[y * width + x]);
         nobombs.forEach((block) => {
@@ -127,7 +134,8 @@ class MineSweeper extends HTMLElement {
         const bombs = this.maxbombs - flags;
         this.bombs.value = bombs + '';
     }
-    gameover() { }
+    gameover() { this.setAttribute('game', 'over'); }
+    gameclear() { this.setAttribute('game', 'clear'); }
     getCanOpenBlocks(blocks, x, y, width, height) {
         const nobombs = [];
         const search = [blocks[y * width + x]];
@@ -172,6 +180,13 @@ class MineSweeper extends HTMLElement {
                 }
             }
         }
+        return count;
+    }
+    countBlock(blocks) {
+        let count = 0;
+        blocks.forEach((block) => { if (!block.isOpen()) {
+            ++count;
+        } });
         return count;
     }
 }
@@ -260,9 +275,9 @@ class MineBlock extends HTMLElement {
     }
 }
 MineBlock.LONGTIME = 500;
-((script) => {
+((script, wc) => {
     if (document.readyState !== 'loading') {
-        return MineSweeper.Init(script.dataset.tagname, script.dataset.blockname);
+        return wc.Init(script.dataset.tagname, script.dataset.blockname);
     }
-    document.addEventListener('DOMContentLoaded', () => { MineSweeper.Init(script.dataset.tagname, script.dataset.blockname); });
-})(document.currentScript);
+    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname, script.dataset.blockname); });
+})(document.currentScript, MineSweeper);

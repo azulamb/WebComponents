@@ -19,7 +19,8 @@ class HTMLCode extends HTMLElement
 		const shadow = this.attachShadow( { mode: 'open' } );
 
 		const style = document.createElement( 'style' );
-		style.innerHTML = [
+		style.innerHTML =
+		[
 			':host { display: block; width: 100%; height: fit-content; margin: 0.5rem 0; }',
 			':host > div { width: 100%; display: flex; justify-content: space-between; }',
 			':host > div > * { width: 49%; margin: 0; padding: 0.5em; box-sizing: border-box; border-radius: 0.5rem; border: 1px solid gray; }',
@@ -66,8 +67,8 @@ class HTMLCode extends HTMLElement
 	}
 }
 
-( ( script ) =>
+( ( script, wc ) =>
 {
-	if ( document.readyState !== 'loading' ) { return HTMLCode.Init( script.dataset.tagname ); }
-	document.addEventListener( 'DOMContentLoaded', () => { HTMLCode.Init( script.dataset.tagname ); } );
-} )( <HTMLScriptElement>document.currentScript );
+	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript, HTMLCode );

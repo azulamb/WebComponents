@@ -34,7 +34,11 @@ const element = new GameBoard();
 
 class GameBoard extends HTMLElement
 {
-	public static Init( tagname = 'game-board' ) { customElements.define( tagname, this ); }
+	public static Init( tagname = 'game-board' )
+	{
+		if ( customElements.get( tagname ) ) { return; }
+		customElements.define( tagname, this );
+	}
 
 	// 盤面用のスタイル。
 	// 今回は書き換えの必要性があるので分離しておきます。
@@ -60,7 +64,8 @@ class GameBoard extends HTMLElement
 
 		// 全体的で書き換えが発生しないスタイルを設定します。
 		const style = document.createElement( 'style' );
-		style.innerHTML = [
+		style.innerHTML =
+		[
 			':host { display: block; overflow: hidden; width: 100%; height: fit-content; --border-color: var( --border, black ); }',
 			// 正方形を作る有名な方法があります。
 			// 横幅が決まっている時、paddingの上下に%指定で値を設定すると、横幅に対する割合が使われます。
@@ -160,13 +165,11 @@ class GameBoard extends HTMLElement
 			styles.push( 'div.board > div.' + color.name + ' { background-color: var( ' + color.var + ', ' + color.color + ' ); }' );
 		} );
 
-
 		// マス目を配置します。
 		// 面倒なので今持っているマスは全部破棄して、全て新しく作り直します。
 		for ( let i = this.board.children.length - 1 ; 0 <= i ; --i ) { this.board.removeChild( this.board.children[ i ] ); }
 		for ( let y = 1 ; y <= height ; ++y )
 		{
-			const row = 'grid-row: ' + y + '/' + ( y + 1 ) + ';';
 			for ( let x = 1 ; x <= width; ++x )
 			{
 				const box = document.createElement( 'div' );
@@ -180,16 +183,22 @@ class GameBoard extends HTMLElement
 				this.board.appendChild( box );
 
 				// スタイルに表示座標を追加します。
-				styles.push(
-					'div.board > [ data-position = "' + position + '" ] {' +
-					'grid-column: ' + x + '/' + ( x + 1 ) +';' + row +
-					'}',
-					'::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' + ( x - 1 ) + ' ) / ' + width + ' ); top: calc( 100% ' + ' * ' + ( y - 1 ) + ' / ' + height + ' ); }'
-				);
+				this.addPieceStyle( styles, position, x, y );
 			}
 		}
 
 		this.boardStyle.innerHTML = styles.join( '' );
+	}
+
+	protected addPieceStyle( styles: string[], position: string, x: number, y: number )
+	{
+		styles.push(
+			'div.board > [ data-position = "' + position + '" ] {' +
+			'grid-column: ' + x + '/' + ( x + 1 ) +';grid-row: ' + y + '/' + ( y + 1 ) + ';' +
+			'}',
+			'::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' +
+			( x - 1 ) + ' ) / ' + this.width + ' ); top: calc( 100% ' + ' * ' + ( y - 1 ) + ' / ' + this.height + ' ); }'
+		);
 	}
 
 	// 指定座標のマスを選択状態にします。
@@ -312,8 +321,8 @@ class GameBoard extends HTMLElement
 	}
 }
 
-( ( script ) =>
+( ( script, wc ) =>
 {
-	if ( document.readyState !== 'loading' ) { return GameBoard.Init( script.dataset.tagname ); }
-	document.addEventListener( 'DOMContentLoaded', () => { GameBoard.Init( script.dataset.tagname ); } );
-} )( <HTMLScriptElement>document.currentScript );
+	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript, GameBoard );

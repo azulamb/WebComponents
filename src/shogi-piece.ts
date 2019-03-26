@@ -25,7 +25,11 @@
 
 class ShogiPiece extends HTMLElement
 {
-	public static Init( tagname = 'shogi-piece' ) { customElements.define( tagname, this ); }
+	public static Init( tagname = 'shogi-piece' )
+	{
+		if ( customElements.get( tagname ) ) { return; }
+		customElements.define( tagname, this );
+	}
 
 	public static Pieces: { print: string, enemy?: string, reverse?: string, names: string[] }[] =
 	[
@@ -169,8 +173,8 @@ class ShogiPiece extends HTMLElement
 	}
 }
 
-( ( script ) =>
+( ( script, wc ) =>
 {
-	if ( document.readyState !== 'loading' ) { return ShogiPiece.Init( script.dataset.tagname ); }
-	document.addEventListener( 'DOMContentLoaded', () => { ShogiPiece.Init( script.dataset.tagname ); } );
-} )( <HTMLScriptElement>document.currentScript );
+	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript, ShogiPiece );

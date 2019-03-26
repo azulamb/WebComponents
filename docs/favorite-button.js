@@ -9,12 +9,13 @@ class FavoriteButton extends HTMLElement {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
         const style = document.createElement('style');
-        style.innerHTML = [
-            ':host { display: inline-block; cursor: pointer; }',
-            ':host > div { color: var( --color, orange ); }',
-            ':host > div::before { content: "☆"; }',
-            ':host( [ on ] ) > div::before { content: "★"; }',
-        ].join('');
+        style.innerHTML =
+            [
+                ':host { display: inline-block; cursor: pointer; }',
+                ':host > div { color: var( --color, orange ); }',
+                ':host > div::before { content: "☆"; }',
+                ':host( [ on ] ) > div::before { content: "★"; }',
+            ].join('');
         const div = document.createElement('div');
         div.addEventListener('click', () => {
             this.toggleAttribute('on');
@@ -24,9 +25,9 @@ class FavoriteButton extends HTMLElement {
         shadow.appendChild(div);
     }
 }
-((script) => {
+((script, wc) => {
     if (document.readyState !== 'loading') {
-        return FavoriteButton.Init(script.dataset.tagname);
+        return wc.Init(script.dataset.tagname);
     }
-    document.addEventListener('DOMContentLoaded', () => { FavoriteButton.Init(script.dataset.tagname); });
-})(document.currentScript);
+    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
+})(document.currentScript, FavoriteButton);

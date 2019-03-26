@@ -28,6 +28,7 @@ class RatingStar extends HTMLElement
 	// 第二引数を指定した場合、そのタグが登録されるまで待ちます。
 	public static Init( tagname = 'rating-stars', waittag = this.StarTag )
 	{
+		if ( customElements.get( tagname ) ) { return; }
 		// カスタムエレメントが定義されるまで待ちます。
 		// 今回は内部で使う <favorite-button> が使えるようになるまで待つ処理となります。
 		customElements.whenDefined( waittag ).then( () =>
@@ -46,7 +47,8 @@ class RatingStar extends HTMLElement
 		const shadow = this.attachShadow( { mode: 'open' } );
 
 		const style = document.createElement( 'style' );
-		style.innerHTML = [
+		style.innerHTML =
+		[
 			':host { display: block; overflow: hidden; width: fit-content; height: fit-content; }',
 			':host > div { display: flex; }',
 		].join( '' );
@@ -185,8 +187,8 @@ class RatingStar extends HTMLElement
 	}
 }
 
-( ( script ) =>
+( ( script, wc ) =>
 {
-	if ( document.readyState !== 'loading' ) { return RatingStar.Init( script.dataset.tagname ); }
-	document.addEventListener( 'DOMContentLoaded', () => { RatingStar.Init( script.dataset.tagname ); } );
-} )( <HTMLScriptElement>document.currentScript );
+	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript, RatingStar );

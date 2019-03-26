@@ -8,18 +8,19 @@ class GameBoard extends HTMLElement {
         this.board.classList.add('board');
         this.initBoard();
         const style = document.createElement('style');
-        style.innerHTML = [
-            ':host { display: block; overflow: hidden; width: 100%; height: fit-content; --border-color: var( --border, black ); }',
-            ':host > div.main { width: 100%; padding: 100% 0 0; position: relative; overflow: hidden; }',
-            ':host > div.top, :host > div.bottom { position: relative; width: 100%; height: fit-content; }',
-            ':host > div.top {}',
-            ':host > div.bottom {}',
-            ':host > div > div { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }',
-            'div.board { display: grid; box-sizing: border-box; border: 1px solid var( --border-color ); }',
-            'div.board > div { width: 100%; height: 100%; border-right: 1px solid var( --border-color ); border-bottom: 1px solid var( --border-color ); }',
-            '::slotted( :not( [slot] ) ) { position: absolute; transition: top 0.5s, left 0.5s; }',
-            '::slotted( [slot] ) { display: inline-block; }',
-        ].join('');
+        style.innerHTML =
+            [
+                ':host { display: block; overflow: hidden; width: 100%; height: fit-content; --border-color: var( --border, black ); }',
+                ':host > div.main { width: 100%; padding: 100% 0 0; position: relative; overflow: hidden; }',
+                ':host > div.top, :host > div.bottom { position: relative; width: 100%; height: fit-content; }',
+                ':host > div.top {}',
+                ':host > div.bottom {}',
+                ':host > div > div { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }',
+                'div.board { display: grid; box-sizing: border-box; border: 1px solid var( --border-color ); }',
+                'div.board > div { width: 100%; height: 100%; border-right: 1px solid var( --border-color ); border-bottom: 1px solid var( --border-color ); }',
+                '::slotted( :not( [slot] ) ) { position: absolute; transition: top 0.5s, left 0.5s; }',
+                '::slotted( [slot] ) { display: inline-block; }',
+            ].join('');
         this.updateBoard();
         const contents = document.createElement('div');
         contents.classList.add('contents');
@@ -44,7 +45,12 @@ class GameBoard extends HTMLElement {
         shadow.appendChild(main);
         shadow.appendChild(bottom);
     }
-    static Init(tagname = 'game-board') { customElements.define(tagname, this); }
+    static Init(tagname = 'game-board') {
+        if (customElements.get(tagname)) {
+            return;
+        }
+        customElements.define(tagname, this);
+    }
     initBoard() {
         if (!this.hasAttribute('width')) {
             this.width = 8;
@@ -69,18 +75,21 @@ class GameBoard extends HTMLElement {
             this.board.removeChild(this.board.children[i]);
         }
         for (let y = 1; y <= height; ++y) {
-            const row = 'grid-row: ' + y + '/' + (y + 1) + ';';
             for (let x = 1; x <= width; ++x) {
                 const box = document.createElement('div');
                 const position = 'x' + x + 'y' + y;
                 box.dataset.position = position;
                 this.board.appendChild(box);
-                styles.push('div.board > [ data-position = "' + position + '" ] {' +
-                    'grid-column: ' + x + '/' + (x + 1) + ';' + row +
-                    '}', '::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' + (x - 1) + ' ) / ' + width + ' ); top: calc( 100% ' + ' * ' + (y - 1) + ' / ' + height + ' ); }');
+                this.addPieceStyle(styles, position, x, y);
             }
         }
         this.boardStyle.innerHTML = styles.join('');
+    }
+    addPieceStyle(styles, position, x, y) {
+        styles.push('div.board > [ data-position = "' + position + '" ] {' +
+            'grid-column: ' + x + '/' + (x + 1) + ';grid-row: ' + y + '/' + (y + 1) + ';' +
+            '}', '::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' +
+            (x - 1) + ' ) / ' + this.width + ' ); top: calc( 100% ' + ' * ' + (y - 1) + ' / ' + this.height + ' ); }');
     }
     select(x, y, ...colors) {
         if (colors.length <= 0) {
@@ -162,9 +171,9 @@ class GameBoard extends HTMLElement {
         }
     }
 }
-((script) => {
+((script, wc) => {
     if (document.readyState !== 'loading') {
-        return GameBoard.Init(script.dataset.tagname);
+        return wc.Init(script.dataset.tagname);
     }
-    document.addEventListener('DOMContentLoaded', () => { GameBoard.Init(script.dataset.tagname); });
-})(document.currentScript);
+    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
+})(document.currentScript, GameBoard);

@@ -49,7 +49,8 @@ class FavoriteButton extends HTMLElement
 		const style = document.createElement( 'style' );
 		// スタイルは今回文字配列を結合して、innerHTMLに代入する力技で対応します。
 		// コメントも書きやすいしね！！
-		style.innerHTML = [
+		style.innerHTML =
+		[
 			// :host はこのタグそのものを指す擬似クラスです。
 			':host { display: inline-block; cursor: pointer; }',
 			// :host はこのタグそのものなので、:host > div はこのタグの中身直下の<div>を指します。
@@ -92,7 +93,7 @@ class FavoriteButton extends HTMLElement
 	}
 }
 
-( ( script ) =>
+( ( script, wc ) =>
 {
 	// script === document.currentScriptは、現在このJavaScriptを読み込んでいる<script>が格納されています。
 	// しかし、この値は読み込んだ直後に実行される処理でしか見れず、ロードイベント後などに参照するとnullになってしまいます。
@@ -103,6 +104,6 @@ class FavoriteButton extends HTMLElement
 	// しかしこの後でないとエラーを起こします。
 	// そこで、document.readyStateを見ます。これがloadingならばまだDOMContentLoadedイベントが発生していません。
 	// これを利用して、loadingで無いならば即初期化処理を行い、そうでない場合はDOMContentLoadedイベントに初期化処理を登録します。
-	if ( document.readyState !== 'loading' ) { return FavoriteButton.Init( script.dataset.tagname ); }
-	document.addEventListener( 'DOMContentLoaded', () => { FavoriteButton.Init( script.dataset.tagname ); } );
-} )( <HTMLScriptElement>document.currentScript );
+	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript, FavoriteButton );

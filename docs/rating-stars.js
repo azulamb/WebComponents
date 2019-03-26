@@ -3,10 +3,11 @@ class RatingStar extends HTMLElement {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
         const style = document.createElement('style');
-        style.innerHTML = [
-            ':host { display: block; overflow: hidden; width: fit-content; height: fit-content; }',
-            ':host > div { display: flex; }',
-        ].join('');
+        style.innerHTML =
+            [
+                ':host { display: block; overflow: hidden; width: fit-content; height: fit-content; }',
+                ':host > div { display: flex; }',
+            ].join('');
         this.stars = document.createElement('div');
         if (!this.hasAttribute('length')) {
             this.length = 5;
@@ -16,6 +17,9 @@ class RatingStar extends HTMLElement {
         shadow.appendChild(this.stars);
     }
     static Init(tagname = 'rating-stars', waittag = this.StarTag) {
+        if (customElements.get(tagname)) {
+            return;
+        }
         customElements.whenDefined(waittag).then(() => {
             this.StarTag = waittag;
             customElements.define(tagname, this);
@@ -95,9 +99,9 @@ class RatingStar extends HTMLElement {
     }
 }
 RatingStar.StarTag = 'favorite-button';
-((script) => {
+((script, wc) => {
     if (document.readyState !== 'loading') {
-        return RatingStar.Init(script.dataset.tagname);
+        return wc.Init(script.dataset.tagname);
     }
-    document.addEventListener('DOMContentLoaded', () => { RatingStar.Init(script.dataset.tagname); });
-})(document.currentScript);
+    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
+})(document.currentScript, RatingStar);

@@ -1,4 +1,9 @@
-class FavoriteButton extends HTMLElement {
+((script, wc) => {
+    if (document.readyState !== 'loading') {
+        return wc.Init(script.dataset.tagname);
+    }
+    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
+})(document.currentScript, class extends HTMLElement {
     static Init(tagname = 'favorite-button') {
         if (customElements.get(tagname)) {
             return;
@@ -24,10 +29,4 @@ class FavoriteButton extends HTMLElement {
         shadow.appendChild(style);
         shadow.appendChild(div);
     }
-}
-((script, wc) => {
-    if (document.readyState !== 'loading') {
-        return wc.Init(script.dataset.tagname);
-    }
-    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
-})(document.currentScript, FavoriteButton);
+});

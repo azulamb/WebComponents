@@ -1,4 +1,9 @@
-class DiceRoll extends HTMLElement {
+((script, wc) => {
+    if (document.readyState !== 'loading') {
+        return wc.Init(script.dataset.tagname);
+    }
+    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
+})(document.currentScript, class extends HTMLElement {
     constructor() {
         super();
         this.timer = 0;
@@ -128,10 +133,4 @@ class DiceRoll extends HTMLElement {
                 break;
         }
     }
-}
-((script, wc) => {
-    if (document.readyState !== 'loading') {
-        return wc.Init(script.dataset.tagname);
-    }
-    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
-})(document.currentScript, DiceRoll);
+});

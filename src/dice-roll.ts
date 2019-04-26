@@ -32,7 +32,20 @@ attributeChangedCallback()で監視しているので呼び出される
 changeイベントの発生
 */
 
-class DiceRoll extends HTMLElement
+interface DiceRollElement extends HTMLElement
+{
+	roll(): boolean;
+	stop(): boolean;
+	min: number;
+	max: number;
+	dice: number;
+}
+
+( ( script, wc ) =>
+{
+	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript, class extends HTMLElement implements DiceRollElement
 {
 	public static Init( tagname = 'dice-roll' )
 	{
@@ -259,10 +272,4 @@ class DiceRoll extends HTMLElement
 			case 'dice': this.onUpdateDice( newVal ); break;
 		}
 	}
-}
-
-( ( script, wc ) =>
-{
-	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
-	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
-} )( <HTMLScriptElement>document.currentScript, DiceRoll );
+} );

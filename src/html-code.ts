@@ -6,7 +6,13 @@
 <html-code>表示したいHTMLコード</html-code>
 */
 
-class HTMLCode extends HTMLElement
+interface HTMLCodeElement extends HTMLElement { updateCode(): void; }
+
+( ( script, wc ) =>
+{
+	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript, class extends HTMLElement implements HTMLCodeElement
 {
 	public static Init( tagname = 'html-code' ) { if ( customElements.get( tagname ) ) { return; }　customElements.define( tagname, this ); }
 
@@ -65,10 +71,4 @@ class HTMLCode extends HTMLElement
 		// ただし、<my-tag flag></my-tag> が <my-tag flag=""></my-tag> になってしまうのでそこだけ修正します。
 		this.code.textContent = this.innerHTML.replace( /\=\"\"/g, '' );
 	}
-}
-
-( ( script, wc ) =>
-{
-	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
-	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
-} )( <HTMLScriptElement>document.currentScript, HTMLCode );
+} );

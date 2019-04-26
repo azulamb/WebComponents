@@ -11,14 +11,19 @@
 	<link rel="apple-touch-icon" sizes="152x152" href="./apple-touch-icon-precomposed.png">-->
 	<script src="./html-code.js"></script>
 	<script src="./favorite-button.js"></script>
+	<script src="./secret-word.js"></script>
+	<script src="./hide-box.js"></script>
 	<script src="./braille-string.js"></script>
 	<script src="./morse-code.js"></script>
+	<script src="./check-list.js"></script>
+	<script src="./dl-button.js"></script>
 	<script src="./dice-roll.js"></script>
 	<script src="./rating-stars.js"></script>
 	<script src="./shogi-piece.js"></script>
 	<script src="./game-board.js"></script>
 	<script src="./shogi-board.js"></script>
 	<script src="./mine-sweeper.js"></script>
+	<style>.wip:after{content:'※';}</style>
 </head>
 <body>
 	<h1>My WebComponents sample</h1>
@@ -26,11 +31,27 @@
 	<h2>favorite-button</h2>
 	<html-code change><favorite-button></favorite-button></html-code>
 
-	<h2>braille-string</h2>
+	<h2>secret-word</h2>
+	<html-code change>山田は<secret-word style="--text:'ネタバレ';">ラスボス</secret-word>です。</html-code>
+
+	<h2>hide-box</h2>
+	<html-code change><hide-box>隠しコンテンツ</hide-box></html-code>
+
+	<h2 class="wip">braille-string</h2>
 	<html-code change><braille-string>test</braille-string></html-code>
 
-	<h2>morse-code</h2>
+	<h2 class="wip">morse-code</h2>
 	<html-code change><morse-code>SOS</morse-code></html-code>
+
+	<h2>check-list</h2>
+	<html-code change><check-list>
+	<check-item>Item1</check-item>
+	<check-item>Item2</check-item>
+	<check-item>Item3</check-item>
+</check-list></html-code>
+
+	<h2 class="wip">dl-button</h2>
+	<html-code change><dl-button src="./dl-button.js" download="dl-button.js"></dl-button></html-code>
 
 	<h2>dice-roll</h2>
 	<html-code change><dice-roll></dice-roll>
@@ -40,7 +61,7 @@
 	<h2>rating-stars</h2>
 	<html-code change><rating-stars></rating-stars></html-code>
 
-	<h2>shogi-piece</h2>
+	<h2 class="wip">shogi-piece</h2>
 	<html-code change><shogi-piece>あ</shogi-piece>
 <shogi-piece enemy>あ</shogi-piece>
 <shogi-piece piece="king"></shogi-piece>
@@ -64,7 +85,7 @@
 	<h2>game-board</h2>
 	<html-code change><game-board></game-board></html-code>
 
-	<h2>shogi-board</h2>
+	<h2 class="wip">shogi-board</h2>
 	<html-code change><shogi-board>
 	<shogi-piece piece="l" data-position="x1y1" enemy></shogi-piece>
 	<shogi-piece piece="n" data-position="x2y1" enemy></shogi-piece>
@@ -112,7 +133,7 @@
 	<shogi-piece piece="p" slot='bottom'></shogi-piece>
 </shogi-board></html-code>
 
-<h2>mine-sweeper</h2>
+<h2 class="wip">mine-sweeper</h2>
 <html-code change><mine-sweeper></mine-sweeper></html-code>
 
 </body>

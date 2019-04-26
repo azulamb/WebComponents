@@ -1,4 +1,9 @@
-class HTMLCode extends HTMLElement {
+((script, wc) => {
+    if (document.readyState !== 'loading') {
+        return wc.Init(script.dataset.tagname);
+    }
+    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
+})(document.currentScript, class extends HTMLElement {
     static Init(tagname = 'html-code') { if (customElements.get(tagname)) {
         return;
     } customElements.define(tagname, this); }
@@ -34,10 +39,4 @@ class HTMLCode extends HTMLElement {
     updateCode() {
         this.code.textContent = this.innerHTML.replace(/\=\"\"/g, '');
     }
-}
-((script, wc) => {
-    if (document.readyState !== 'loading') {
-        return wc.Init(script.dataset.tagname);
-    }
-    document.addEventListener('DOMContentLoaded', () => { wc.Init(script.dataset.tagname); });
-})(document.currentScript, HTMLCode);
+});

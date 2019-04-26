@@ -14,7 +14,22 @@ const element = new FavoriteButton();
     * 変更時に発生するイベントです。
 */
 
-class FavoriteButton extends HTMLElement
+interface FavoriteButtonElement extends HTMLElement {  }
+
+( ( script, wc ) =>
+{
+	// script === document.currentScriptは、現在このJavaScriptを読み込んでいる<script>が格納されています。
+	// しかし、この値は読み込んだ直後に実行される処理でしか見れず、ロードイベント後などに参照するとnullになってしまいます。
+	// このように即時関数の引数等して与えれば、この中ではscriptという変数として生き残るので、このようにしています。
+	// 例えば <script src="./html-code.js" data-tagname="star-btn"></script> のようにdataset経由で設定を読み込み時に与えることができます。
+
+	// DOMContentLoaded はページロード後に実行されますが、もしロード後にイベントを登録するとこのイベントは実行されません。
+	// しかしこの後でないとエラーを起こします。
+	// そこで、document.readyStateを見ます。これがloadingならばまだDOMContentLoadedイベントが発生していません。
+	// これを利用して、loadingで無いならば即初期化処理を行い、そうでない場合はDOMContentLoadedイベントに初期化処理を登録します。
+	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
+	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
+} )( <HTMLScriptElement>document.currentScript, class extends HTMLElement implements FavoriteButtonElement
 {
 	// タグの登録やその前後になにかする必要がある場合に行う処理。
 	public static Init( tagname = 'favorite-button' )
@@ -91,19 +106,4 @@ class FavoriteButton extends HTMLElement
 		</my-tag>
 		*/
 	}
-}
-
-( ( script, wc ) =>
-{
-	// script === document.currentScriptは、現在このJavaScriptを読み込んでいる<script>が格納されています。
-	// しかし、この値は読み込んだ直後に実行される処理でしか見れず、ロードイベント後などに参照するとnullになってしまいます。
-	// このように即時関数の引数等して与えれば、この中ではscriptという変数として生き残るので、このようにしています。
-	// 例えば <script src="./html-code.js" data-tagname="star-btn"></script> のようにdataset経由で設定を読み込み時に与えることができます。
-
-	// DOMContentLoaded はページロード後に実行されますが、もしロード後にイベントを登録するとこのイベントは実行されません。
-	// しかしこの後でないとエラーを起こします。
-	// そこで、document.readyStateを見ます。これがloadingならばまだDOMContentLoadedイベントが発生していません。
-	// これを利用して、loadingで無いならば即初期化処理を行い、そうでない場合はDOMContentLoadedイベントに初期化処理を登録します。
-	if ( document.readyState !== 'loading' ) { return wc.Init( script.dataset.tagname ); }
-	document.addEventListener( 'DOMContentLoaded', () => { wc.Init( script.dataset.tagname ); } );
-} )( <HTMLScriptElement>document.currentScript, FavoriteButton );
+} );

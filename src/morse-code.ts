@@ -30,7 +30,7 @@ class MorseCode extends HTMLElement
 		const style = document.createElement( 'style' );
 		style.innerHTML =
 		[
-			':host { display: inline-block; }',
+			':host { display: inline-block; --short: "・"; --long: "－"; }',
 		].join( '' );
 
 		this.contents = document.createElement( 'div' );
@@ -56,12 +56,12 @@ class MorseCode extends HTMLElement
 		if ( !table ) { this.contents.innerHTML = ''; return; }
 		const strings = Array.from( this.textContent || '' );
 
-		const s = this.getAttribute( 'short' ) || '・';
-		const l = this.getAttribute( 'long' ) || '－';
+		const s = this.getAttribute( 'short' ) || this.style.getPropertyValue( '--short' ) || '・';
+		const l = this.getAttribute( 'long' ) || this.style.getPropertyValue( '--long' ) || '－';
 		this.contents.textContent = strings.map( ( char ) => { return this.convert( table[ char ] || '', s, l ); } ).join( '' );
 	}
 
-	static get observedAttributes() { return [ 'lang', 'short', 'long' ]; }
+	static get observedAttributes() { return [ 'short', 'lang', 'style' ]; }
 
 	public attributeChangedCallback( attrName: string, oldVal: any , newVal: any )
 	{

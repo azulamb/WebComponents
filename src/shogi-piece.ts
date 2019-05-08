@@ -106,9 +106,13 @@ class ShogiPiece extends HTMLElement
 		// <slot> とは子要素の代入先を指定するタグです。
 		// <slot>が以下のように使われていたとします。
 		/*
-		<div>
-			<slot></slot>
-		</div>
+		<my-tag>
+			<ShadowRoot>
+				<div>
+					<slot></slot>
+				</div>
+			<ShadowRoot>
+		</my-tag>
 		*/
 		// 例えば以下のように子要素を追加したとします。
 		/*
@@ -117,14 +121,18 @@ class ShogiPiece extends HTMLElement
 			<div>test2</div>
 		</my-tag>
 		*/
-		// この時、あたかも以下のような内部構造に成ったかのように振る舞います。
+		// この時、あたかも以下のような内部構造になったかのように振る舞います。
 		/*
-		<div>
-			<div>test1</div>
-			<div>test2</div>
-		</div>
+		<my-tag>
+			<ShadowRoot>
+				<div>
+					<div>test1</div>
+					<div>test2</div>
+				</div>
+			<ShadowRoot>
+		</my-tag>
 		*/
-		// あくまで振る舞いがこうなるだけです。<slot>内は外界扱いなので、スタイルも影響を受けています。
+		// あくまで振る舞いがこうなるだけです。<slot>内は外界扱いなので、スタイルもShadowRoot内ではなく外部の影響を受けています。
 		// また子要素はthis.childrenで参照したり、<my-tag>に対してappendChildできるので、普通の囲みタグの実装が可能です。
 		div.appendChild( document.createElement( 'slot' ) );
 

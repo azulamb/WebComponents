@@ -56,23 +56,25 @@
                     ':host > div > div { position: absolute; top: 0; right: 100%; width: 1.4em; height: 1.4em; box-sizing: border-box; padding: 0.2em;  user-select: none;  cursor: pointer; }',
                     ':host > div > div::before { display: block; width: 100%; height: 100%; border: var( --border ); box-sizing: border-box; border-radius: 20%; content: ""; }',
                     ':host-context( [ circle ] ) > div > div::before { border-radius: 50%; }',
-                    ':host( [ check ] ) > div > div::after { display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0; text-align: center; content: var( --check-text ); }',
+                    ':host( [ checked ] ) > div > div::after { display: block; position: absolute; top: 0; bottom: 0; left: 0; right: 0; text-align: center; content: var( --check-text ); }',
                 ].join('');
             const checkbox = document.createElement('div');
-            checkbox.addEventListener('click', () => { this.check = !this.check; });
+            checkbox.addEventListener('click', () => { this.checked = !this.checked; });
             const contents = document.createElement('div');
             contents.appendChild(checkbox);
             contents.appendChild(document.createElement('slot'));
             shadow.appendChild(style);
             shadow.appendChild(contents);
         }
-        get check() { return this.hasAttribute('check'); }
-        set check(value) { if (value) {
-            this.setAttribute('check', '');
+        get checked() { return this.hasAttribute('checked'); }
+        set checked(value) { if (value) {
+            this.setAttribute('checked', '');
         }
         else {
-            this.removeAttribute('check');
+            this.removeAttribute('checked');
         } }
+        get value() { return this.getAttribute('value') || ''; }
+        set value(value) { this.setAttribute('value', value); }
     }
     CheckList.Init(script.dataset.tagname, script.dataset.itemname);
 });

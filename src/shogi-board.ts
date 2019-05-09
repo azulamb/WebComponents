@@ -64,7 +64,8 @@ class ShogiBoard extends GameBoard
 			'grid-column: -' + x + '/-' + ( x + 1 ) +';grid-row: -' + y + '/-' + ( y + 1 ) + ';' +
 			'}',
 			'::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' +
-			( this.width - x ) + ' ) / ' + this.width + ' ); top: calc( 100% ' + ' * ' + ( y - 1 ) + ' / ' + this.height + ' ); }'
+			( this.width - x ) + ' ) / ' + this.width + ' ); top: calc( 100% ' + ' * ' + ( y - 1 ) + ' / ' + this.height +
+			' ); width: calc( 100% / ' + this.width + ' ); }'
 		);
 	}
 

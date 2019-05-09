@@ -49,95 +49,89 @@ class ShogiPiece extends HTMLElement
 
 		const shadow = this.attachShadow( { mode: 'open' } );
 
-		// 今回は以下のような構造にします。
-		/*
-		<div>
-			<::before>駒の外枠</::before>
-			外部から与えられた駒の中身
-			<::after>駒の中身(ちゃんと指定しないと空)</::after>
-		</div>
-		*/
-		// この3つの要素を重ねて表現します。
 		const styles = [
-			':host { display: block; --shogi-size: var( --size, 2rem ); width: var( --shogi-size ); height: var( --shogi-size ); line-height: var( --shogi-size ); }',
-			':host > div { position: relative; text-align: center; font-size: var( --shogi-size ); width: 100%; height: 100%; font-size: calc( var( --shogi-size ) / 2 ); }',
-			// 基本となる将棋の駒の設定です。
-			':host > div::before, :host > div::after { display: block; width: 1em; height: 1em; line-height: 1em; text-align: center; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; }',
-			// 駒の枠です。
-			':host > div::before { content: "☖"; font-size: var( --shogi-size ); }',
-			// 指定された規定の駒のスタイルです。
-			':host > div::after { font-size: calc( var( --shogi-size ) / 2 ); }',
+			':host { display: block; width: 2rem; }',
+			':host > div { position: relative; text-align: center; width: 100%; height: 100%; }',
+			':host > div > svg { display: block; width: 100%; height: 100%; }',
+			':host > div > svg .c { display: none; }',
 			// 敵側だったときは180度回転します。
 			':host( [ enemy ] ) > div { transform: rotate( 180deg ); }',
 		];
 
+		// 文字列の動的な拡大縮小のため、SVGで文字と枠を描画し、それを拡大縮小します。
+		const frame = document.createElementNS( 'http://www.w3.org/2000/svg', 'text' );
+		frame.setAttribute( 'x', '50%' );
+		frame.setAttribute( 'y', '50%' );
+		frame.setAttribute( 'text-anchor', 'middle' );
+		frame.setAttribute( 'dominant-baseline', 'central' );
+		frame.setAttribute( 'fill', 'var( --color )' );
+		frame.textContent = '☖';
+
+		const svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+		svg.setAttributeNS( null, 'width', '20px' );
+		svg.setAttributeNS( null, 'height', '20px' );
+		svg.setAttributeNS( null, 'viewBox', '0 0 20 20' );
+		svg.appendChild( frame );
+
+		const create = ( text: string, name: string ) =>
+		{
+			const piece= document.createElementNS( 'http://www.w3.org/2000/svg', 'text' );
+			piece.classList.add( 'c', name );
+			piece.textContent = text;
+			piece.setAttribute( 'x', '50%' );
+			piece.setAttribute( 'y', '45%' );
+			piece.setAttribute( 'text-anchor', 'middle' );
+			piece.setAttribute( 'dominant-baseline', 'central' );
+			piece.setAttribute( 'font-size', '8' );
+			piece.setAttribute( 'fill', 'var( --color )' );
+
+			return piece;
+		};
+
 		// stylesに各駒のスタイルを追加していきます。
 		ShogiPiece.Pieces.forEach( ( data ) =>
 		{
+			const basename = data.names[ 0 ];
 			// 通常の駒
 			styles.push(
-				data.names.map( ( name ) => { return ':host( [ piece = "' + name + '" ] ) > div::after' } ).join( ',' ) +
-				' { content: "' + data.print + '"; }'
+				data.names.map( ( name ) => { return ':host( [ piece = "' + name + '" ] ) .c.' + basename; } ).join( ',' ) +
+				' { display: block; }'
 			);
+			svg.appendChild( create( data.print, basename ) );
 
 			// 敵側にいるときだけ特殊な駒の処理
 			if ( data.enemy )
 			{
 				styles.push(
-					data.names.map( ( name ) => { return ':host( [ piece = "' + name + '" ][ enemy ] ) > div::after' } ).join( ',' ) +
-					' { content: "' + data.enemy + '"; }'
+					data.names.map( ( name ) => { return ':host( [ piece = "' + name + '" ][ enemy ] ) .c.' + basename; } ).join( ',' ) +
+					' { display: none; }',
+					data.names.map( ( name ) => { return ':host( [ piece = "' + name + '" ][ enemy ] ) .c.e_' + basename; } ).join( ',' ) +
+					' { display: block; }'
 				);
+				svg.appendChild( create( data.enemy, 'e_' + basename ) );
 			}
 
 			// 成った時の駒の処理
 			if ( data.reverse )
 			{
 				styles.push(
-					data.names.map( ( name ) => { return ':host( [ piece = "' + name + '" ][ reverse ] ) > div::after' } ).join( ',' ) +
-					' { content: "' + data.reverse + '"; }'
+					data.names.map( ( name ) => { return ':host( [ piece = "' + name + '" ][ reverse ] ) .c.' + basename } ).join( ',' ) +
+					' { display: none; }',
+					data.names.map( ( name ) => { return ':host( [ piece = "' + name + '" ][ reverse ] ) .c.r_' + basename } ).join( ',' ) +
+					' { display: block; }'
 				);
+				svg.appendChild( create( data.reverse, 'r_' + basename ) );
 			}
 		} );
 
 		const style = document.createElement( 'style' );
 		style.innerHTML = styles.join( '' );
 
-		const div = document.createElement( 'div' );
-		// <slot> とは子要素の代入先を指定するタグです。
-		// <slot>が以下のように使われていたとします。
-		/*
-		<my-tag>
-			<ShadowRoot>
-				<div>
-					<slot></slot>
-				</div>
-			<ShadowRoot>
-		</my-tag>
-		*/
-		// 例えば以下のように子要素を追加したとします。
-		/*
-		<my-tag>
-			<div>test1</div>
-			<div>test2</div>
-		</my-tag>
-		*/
-		// この時、あたかも以下のような内部構造になったかのように振る舞います。
-		/*
-		<my-tag>
-			<ShadowRoot>
-				<div>
-					<div>test1</div>
-					<div>test2</div>
-				</div>
-			<ShadowRoot>
-		</my-tag>
-		*/
-		// あくまで振る舞いがこうなるだけです。<slot>内は外界扱いなので、スタイルもShadowRoot内ではなく外部の影響を受けています。
-		// また子要素はthis.childrenで参照したり、<my-tag>に対してappendChildできるので、普通の囲みタグの実装が可能です。
-		div.appendChild( document.createElement( 'slot' ) );
+		const contents = document.createElement( 'div' );
+		contents.appendChild( svg );
 
 		shadow.appendChild( style );
-		shadow.appendChild( div );
+		shadow.appendChild( contents );
 	}
 
 	// プロパティを作ります。

@@ -15,11 +15,12 @@ class DLButton extends HTMLElement
 		const style = document.createElement( 'style' );
 		style.innerHTML =
 		[
-			':host { display: inline-block; cursor: pointer; border-radius: 0.2rem; border: 1px solid gray; overflow: hidden; }',
+			':host { --text: "Download"; --disable-color: rgba( 0, 0, 0, 0.3 ); display: inline-block; cursor: pointer; border-radius: 0.2rem; border: 1px solid gray; overflow: hidden; }',
 			':host > div { position: relative; width: 100%; height: 100%; box-sizing: border-box; padding: 0.4em 1.2em; display: flex; flex-direction: column; justify-content: center; align-items: center; }',
 			':host > div > a { display: block; text-decoration: none; border: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }',
-			':host( :empty ) > div:before { content: "Download"; display: inline; }',
-			':host( [ disable ] ) {  }',
+			':host( :empty ) > div::before { content: var( --text ); display: inline; }',
+			':host( [ disable ] ) { cursor: auto; }',
+			':host( [ disable ] ) > div::after { content: ""; display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: var( --disable-color ); }',
 			':host( [ disable ] ) > div > a { display: none; }',
 		].join( '' );
 

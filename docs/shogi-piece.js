@@ -3,31 +3,60 @@ class ShogiPiece extends HTMLElement {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
         const styles = [
-            ':host { display: block; --shogi-size: var( --size, 2rem ); width: var( --shogi-size ); height: var( --shogi-size ); line-height: var( --shogi-size ); }',
-            ':host > div { position: relative; text-align: center; font-size: var( --shogi-size ); width: 100%; height: 100%; font-size: calc( var( --shogi-size ) / 2 ); }',
-            ':host > div::before, :host > div::after { display: block; width: 1em; height: 1em; line-height: 1em; text-align: center; position: absolute; top: 0; bottom: 0; left: 0; right: 0; margin: auto; }',
-            ':host > div::before { content: "☖"; font-size: var( --shogi-size ); }',
-            ':host > div::after { font-size: calc( var( --shogi-size ) / 2 ); }',
+            ':host { display: block; width: 2rem; }',
+            ':host > div { position: relative; text-align: center; width: 100%; height: 100%; }',
+            ':host > div > svg { display: block; width: 100%; height: 100%; }',
+            ':host > div > svg .c { display: none; }',
             ':host( [ enemy ] ) > div { transform: rotate( 180deg ); }',
         ];
+        const frame = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        frame.setAttribute('x', '50%');
+        frame.setAttribute('y', '50%');
+        frame.setAttribute('text-anchor', 'middle');
+        frame.setAttribute('dominant-baseline', 'central');
+        frame.setAttribute('fill', 'var( --color )');
+        frame.textContent = '☖';
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttributeNS(null, 'width', '20px');
+        svg.setAttributeNS(null, 'height', '20px');
+        svg.setAttributeNS(null, 'viewBox', '0 0 20 20');
+        svg.appendChild(frame);
+        const create = (text, name) => {
+            const piece = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            piece.classList.add('c', name);
+            piece.textContent = text;
+            piece.setAttribute('x', '50%');
+            piece.setAttribute('y', '45%');
+            piece.setAttribute('text-anchor', 'middle');
+            piece.setAttribute('dominant-baseline', 'central');
+            piece.setAttribute('font-size', '8');
+            piece.setAttribute('fill', 'var( --color )');
+            return piece;
+        };
         ShogiPiece.Pieces.forEach((data) => {
-            styles.push(data.names.map((name) => { return ':host( [ piece = "' + name + '" ] ) > div::after'; }).join(',') +
-                ' { content: "' + data.print + '"; }');
+            const basename = data.names[0];
+            styles.push(data.names.map((name) => { return ':host( [ piece = "' + name + '" ] ) .c.' + basename; }).join(',') +
+                ' { display: block; }');
+            svg.appendChild(create(data.print, basename));
             if (data.enemy) {
-                styles.push(data.names.map((name) => { return ':host( [ piece = "' + name + '" ][ enemy ] ) > div::after'; }).join(',') +
-                    ' { content: "' + data.enemy + '"; }');
+                styles.push(data.names.map((name) => { return ':host( [ piece = "' + name + '" ][ enemy ] ) .c.' + basename; }).join(',') +
+                    ' { display: none; }', data.names.map((name) => { return ':host( [ piece = "' + name + '" ][ enemy ] ) .c.e_' + basename; }).join(',') +
+                    ' { display: block; }');
+                svg.appendChild(create(data.enemy, 'e_' + basename));
             }
             if (data.reverse) {
-                styles.push(data.names.map((name) => { return ':host( [ piece = "' + name + '" ][ reverse ] ) > div::after'; }).join(',') +
-                    ' { content: "' + data.reverse + '"; }');
+                styles.push(data.names.map((name) => { return ':host( [ piece = "' + name + '" ][ reverse ] ) .c.' + basename; }).join(',') +
+                    ' { display: none; }', data.names.map((name) => { return ':host( [ piece = "' + name + '" ][ reverse ] ) .c.r_' + basename; }).join(',') +
+                    ' { display: block; }');
+                svg.appendChild(create(data.reverse, 'r_' + basename));
             }
         });
         const style = document.createElement('style');
         style.innerHTML = styles.join('');
-        const div = document.createElement('div');
-        div.appendChild(document.createElement('slot'));
+        const contents = document.createElement('div');
+        contents.appendChild(svg);
         shadow.appendChild(style);
-        shadow.appendChild(div);
+        shadow.appendChild(contents);
     }
     static Init(tagname = 'shogi-piece') {
         if (customElements.get(tagname)) {

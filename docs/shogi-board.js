@@ -18,7 +18,8 @@ class ShogiBoard extends GameBoard {
         styles.push('div.board > [ data-position = "' + position + '" ] {' +
             'grid-column: -' + x + '/-' + (x + 1) + ';grid-row: -' + y + '/-' + (y + 1) + ';' +
             '}', '::slotted( [ data-position = "' + position + '" ] ) { left: calc( ( 100% ' + ' * ' +
-            (this.width - x) + ' ) / ' + this.width + ' ); top: calc( 100% ' + ' * ' + (y - 1) + ' / ' + this.height + ' ); }');
+            (this.width - x) + ' ) / ' + this.width + ' ); top: calc( 100% ' + ' * ' + (y - 1) + ' / ' + this.height +
+            ' ); width: calc( 100% / ' + this.width + ' ); }');
     }
     setPiece(x, y, piece, enemy, reverse) {
         if (typeof piece === 'string') {

@@ -19,7 +19,9 @@
 	<script src="./dl-button.js"></script>
 	<script src="./line-text.js"></script>
 	<script src="./dice-roll.js"></script>
-	<script src="./hex-box.js"></script>
+	<script src="./hex-chip.js"></script>
+	<script src="./hex-line.js"></script>
+	<script src="./hex-map.js"></script>
 	<script src="./rating-stars.js"></script>
 	<script src="./shogi-piece.js"></script>
 	<script src="./game-board.js"></script>
@@ -67,8 +69,30 @@
 	<h2>rating-stars</h2>
 	<html-code change><rating-stars></rating-stars></html-code>
 
-	<h2 class="wip">hex-box</h2>
-	<html-code><hex-box></hex-box><hex-box horizontal></hex-box></html-code>
+	<h2 class="wip">hex-chip</h2>
+	<html-code><hex-chip></hex-chip>
+<hex-chip horizontal></hex-chip></html-code>
+
+	<h2 class="wip">hex-map</h2>
+	<html-code><hex-map style="width: 100%;">
+	<hex-line>
+		<hex-chip></hex-chip>
+		<hex-chip></hex-chip>
+		<hex-chip></hex-chip>
+		<hex-chip></hex-chip>
+	</hex-line>
+	<hex-line>
+		<hex-chip></hex-chip>
+		<hex-chip></hex-chip>
+		<hex-chip></hex-chip>
+	</hex-line>
+	<hex-line>
+		<hex-chip></hex-chip>
+		<hex-chip></hex-chip>
+		<hex-chip></hex-chip>
+		<hex-chip></hex-chip>
+	</hex-line>
+</hex-map></html-code>
 
 	<h2>shogi-piece</h2>
 	<html-code change><shogi-piece></shogi-piece>

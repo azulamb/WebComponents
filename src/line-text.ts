@@ -46,6 +46,7 @@ interface LineTextElement extends HTMLElement
 			this.text.setAttribute( 'dominant-baseline', 'text-before-edge' );
 			this.text.setAttribute( 'fill', 'var( --color )' );
 			this.svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+			this.svg.setAttributeNS( null, 'preserveAspectRatio', 'none' );
 			this.svg.appendChild( this.text );
 
 			const contents = document.createElement( 'div' );

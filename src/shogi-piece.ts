@@ -71,6 +71,7 @@ class ShogiPiece extends HTMLElement
 		svg.setAttributeNS( null, 'width', '20px' );
 		svg.setAttributeNS( null, 'height', '20px' );
 		svg.setAttributeNS( null, 'viewBox', '0 0 20 20' );
+		svg.setAttributeNS( null, 'preserveAspectRatio', 'none' );
 		svg.appendChild( frame );
 
 		const create = ( text: string, name: string ) =>

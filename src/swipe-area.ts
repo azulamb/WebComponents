@@ -43,7 +43,7 @@ interface SwipeAreaEvent extends CustomEvent
 			style.textContent =
 			[
 				':host { display: block; width: 100%; height: 100%; }',
-				':host( [ disable ] ) { pointer-events: none; }',
+				':host( [ disable ] ) > div { pointer-events: none; }',
 				':host > div { width: 100%; height: 100%; }',
 			].join( '' );
 

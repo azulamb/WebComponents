@@ -26,25 +26,15 @@ interface MineBlockElement extends HTMLElement
 	document.addEventListener( 'DOMContentLoaded', () => { init( script ); } );
 } )( <HTMLScriptElement>document.currentScript, ( script: HTMLScriptElement ) =>
 {
+
 	class MineSweeper extends HTMLElement implements MineSweeperElement
 	{
-		private static Block = 'mine-block';
 		private boardStyle: HTMLStyleElement;
 		private width: HTMLInputElement;
 		private height: HTMLInputElement;
 		private bombs: HTMLInputElement;
 		private board: HTMLElement;
 		private maxbombs: number;
-	
-		public static Init( tagname = 'mine-sweeper', block = MineSweeper.Block )
-		{
-			if ( customElements.get( tagname ) ) { return; }
-			// 内部で使うブロックを先に定義します。
-			MineSweeper.Block = block;
-			MineBlock.Init( block );
-			// 定義済みになるまで待った後定義します。
-			customElements.whenDefined( block ).then( () => { customElements.define( tagname, this ); } );
-		}
 	
 		constructor()
 		{
@@ -135,7 +125,7 @@ interface MineBlockElement extends HTMLElement
 	
 		private createBlock( x: number, y: number )
 		{
-			const block: MineBlock = new ( customElements.get( MineSweeper.Block ) )( x, y );
+			const block: MineBlock = new MineBlock( x, y );
 			block.addEventListener( 'open', ( event: MineEvent ) => { this.open( event.detail.x, event.detail.y ); } );
 			block.addEventListener( 'flag', ( event: MineEvent ) => { this.flag( event.detail.x, event.detail.y ); } );
 			return block;
@@ -351,7 +341,6 @@ interface MineBlockElement extends HTMLElement
 	class MineBlock extends HTMLElement implements MineBlockElement
 	{
 		public static LONGTIME = 500;
-		public static Init( tagname = 'mine-block' ) { customElements.define( tagname, this ); }
 		private x: number;
 		private y: number;
 		private bomb: boolean;
@@ -469,5 +458,10 @@ interface MineBlockElement extends HTMLElement
 		}
 	}
 
-	MineSweeper.Init( script.dataset.tagname, script.dataset.blockname );
+	( ( tagname = 'mine-sweeper', blocktag = 'mine-block' ) =>
+	{
+		if ( customElements.get( tagname ) ) { return; }
+		customElements.define( blocktag, MineBlock );
+		customElements.whenDefined( blocktag ).then( () => { customElements.define( tagname, MineSweeper ); } );
+	} )( script.dataset.tagname, script.dataset.blockname );
 } );

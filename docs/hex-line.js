@@ -4,13 +4,12 @@
     }
     document.addEventListener('DOMContentLoaded', () => { init(script); });
 })(document.currentScript, (script) => {
-    class HexLine extends HTMLElement {
-        static Init(tagname = 'hex-line') {
-            if (customElements.get(tagname)) {
-                return;
-            }
-            customElements.define(tagname, this);
+    ((component, tagname = 'hex-line') => {
+        if (customElements.get(tagname)) {
+            return;
         }
+        customElements.define(tagname, component);
+    })(class extends HTMLElement {
         constructor() {
             super();
             const shadow = this.attachShadow({ mode: 'open' });
@@ -26,6 +25,5 @@
             shadow.appendChild(style);
             shadow.appendChild(contents);
         }
-    }
-    HexLine.Init(script.dataset.tagname);
+    }, script.dataset.tagname);
 });

@@ -4,13 +4,12 @@
     }
     document.addEventListener('DOMContentLoaded', () => { init(script); });
 })(document.currentScript, (script) => {
-    class HexMap extends HTMLElement {
-        static Init(tagname = 'hex-map') {
-            if (customElements.get(tagname)) {
-                return;
-            }
-            customElements.define(tagname, this);
+    ((component, tagname = 'hex-map') => {
+        if (customElements.get(tagname)) {
+            return;
         }
+        customElements.define(tagname, component);
+    })(class extends HTMLElement {
         constructor() {
             super();
             const shadow = this.attachShadow({ mode: 'open' });
@@ -27,6 +26,5 @@
             shadow.appendChild(style);
             shadow.appendChild(contents);
         }
-    }
-    HexMap.Init(script.dataset.tagname);
+    }, script.dataset.tagname);
 });

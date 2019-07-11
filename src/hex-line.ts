@@ -8,14 +8,12 @@ interface HexLineElement extends HTMLElement
 	document.addEventListener( 'DOMContentLoaded', () => { init( script ); } );
 } )( <HTMLScriptElement>document.currentScript, ( script: HTMLScriptElement ) =>
 {
-	class HexLine extends HTMLElement implements HexLineElement
+	( ( component, tagname = 'hex-line' ) =>
 	{
-		public static Init( tagname = 'hex-line' )
-		{
-			if ( customElements.get( tagname ) ) { return; }
-			customElements.define( tagname, this );
-		}
-
+		if ( customElements.get( tagname ) ) { return; }
+		customElements.define( tagname, component );
+	})( class extends HTMLElement
+	{
 		constructor()
 		{
 			super();
@@ -36,7 +34,5 @@ interface HexLineElement extends HTMLElement
 			shadow.appendChild( style );
 			shadow.appendChild( contents );
 		}
-	}
-
-	HexLine.Init( script.dataset.tagname );
+	}, script.dataset.tagname );
 } );

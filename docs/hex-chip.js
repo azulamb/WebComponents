@@ -4,13 +4,12 @@
     }
     document.addEventListener('DOMContentLoaded', () => { init(script); });
 })(document.currentScript, (script) => {
-    class HexChip extends HTMLElement {
-        static Init(tagname = 'hex-chip') {
-            if (customElements.get(tagname)) {
-                return;
-            }
-            customElements.define(tagname, this);
+    ((component, tagname = 'hex-chip') => {
+        if (customElements.get(tagname)) {
+            return;
         }
+        customElements.define(tagname, component);
+    })(class extends HTMLElement {
         constructor() {
             super();
             const shadow = this.attachShadow({ mode: 'open' });
@@ -133,6 +132,5 @@
             }
             this.drawHex();
         }
-    }
-    HexChip.Init(script.dataset.tagname);
+    }, script.dataset.tagname);
 });

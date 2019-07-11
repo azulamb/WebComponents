@@ -4,7 +4,15 @@
     }
     document.addEventListener('DOMContentLoaded', () => { init(script); });
 })(document.currentScript, (script) => {
-    class RatingStar extends HTMLElement {
+    const startag = script.dataset.star || 'favorite-button';
+    ((component, tagname = '') => {
+        if (customElements.get(tagname)) {
+            return;
+        }
+        customElements.whenDefined(startag).then(() => {
+            customElements.define(tagname, component);
+        });
+    })(class extends HTMLElement {
         constructor() {
             super();
             const shadow = this.attachShadow({ mode: 'open' });
@@ -21,15 +29,6 @@
             this.updateStars();
             shadow.appendChild(style);
             shadow.appendChild(this.stars);
-        }
-        static Init(tagname = 'rating-stars', waittag = this.StarTag) {
-            if (customElements.get(tagname)) {
-                return;
-            }
-            customElements.whenDefined(waittag).then(() => {
-                this.StarTag = waittag;
-                customElements.define(tagname, this);
-            });
         }
         updateStars() {
             const stars = this.stars.children;
@@ -50,7 +49,7 @@
             }
         }
         createStar() {
-            const Star = customElements.get(RatingStar.StarTag);
+            const Star = customElements.get(startag);
             return new Star();
         }
         convertPositiveNumber(value) {
@@ -103,7 +102,5 @@
                     break;
             }
         }
-    }
-    RatingStar.StarTag = 'favorite-button';
-    RatingStar.Init(script.dataset.tagname, script.dataset.star);
+    }, script.dataset.tagname);
 });

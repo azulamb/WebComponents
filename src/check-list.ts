@@ -17,8 +17,9 @@ interface CheckItemElement extends HTMLElement
 {
 	if ( document.readyState !== 'loading' ) { return init( script ); }
 	document.addEventListener( 'DOMContentLoaded', () => { init( script ); } );
-} )( <HTMLScriptElement>document.currentScript, ( script: HTMLScriptElement )=>
+} )( <HTMLScriptElement>document.currentScript, ( script: HTMLScriptElement ) =>
 {
+
 	class CheckList extends HTMLElement implements CheckListElement
 	{
 		private static ITEMNAME: string;

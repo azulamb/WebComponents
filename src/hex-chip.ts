@@ -10,14 +10,12 @@ interface HexChipElement extends HTMLElement
 	document.addEventListener( 'DOMContentLoaded', () => { init( script ); } );
 } )( <HTMLScriptElement>document.currentScript, ( script: HTMLScriptElement ) =>
 {
-	class HexChip extends HTMLElement implements HexChipElement
+	( ( component, tagname = 'hex-chip' ) =>
 	{
-		public static Init( tagname = 'hex-chip' )
-		{
-			if ( customElements.get( tagname ) ) { return; }
-			customElements.define( tagname, this );
-		}
-
+		if ( customElements.get( tagname ) ) { return; }
+		customElements.define( tagname, component );
+	})( class extends HTMLElement implements HexChipElement
+	{
 		private hex: SVGPathElement;
 
 		constructor()
@@ -165,7 +163,5 @@ interface HexChipElement extends HTMLElement
 			if ( oldVal === newVal ) { return; }
 			this.drawHex();
 		}
-	}
-
-	HexChip.Init( script.dataset.tagname );
+	}, script.dataset.tagname );
 } );

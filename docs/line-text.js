@@ -4,13 +4,12 @@
     }
     document.addEventListener('DOMContentLoaded', () => { init(script); });
 })(document.currentScript, (script) => {
-    class LineText extends HTMLElement {
-        static Init(tagname = 'line-text') {
-            if (customElements.get(tagname)) {
-                return;
-            }
-            customElements.define(tagname, this);
+    ((component, tagname = 'line-text') => {
+        if (customElements.get(tagname)) {
+            return;
         }
+        customElements.define(tagname, component);
+    })(class extends HTMLElement {
         constructor() {
             super();
             const shadow = this.attachShadow({ mode: 'open' });
@@ -56,6 +55,5 @@
             }
             this.update();
         }
-    }
-    LineText.Init(script.dataset.tagname);
+    }, script.dataset.tagname);
 });

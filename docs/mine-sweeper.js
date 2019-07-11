@@ -26,14 +26,6 @@
             shadow.appendChild(this.initBoard());
             this.reset();
         }
-        static Init(tagname = 'mine-sweeper', block = MineSweeper.Block) {
-            if (customElements.get(tagname)) {
-                return;
-            }
-            MineSweeper.Block = block;
-            MineBlock.Init(block);
-            customElements.whenDefined(block).then(() => { customElements.define(tagname, this); });
-        }
         initHeader(width, height, bombs) {
             const header = document.createElement('header');
             this.maxbombs = bombs;
@@ -71,7 +63,7 @@
             return bombs <= 0 ? 1 : bombs;
         }
         createBlock(x, y) {
-            const block = new (customElements.get(MineSweeper.Block))(x, y);
+            const block = new MineBlock(x, y);
             block.addEventListener('open', (event) => { this.open(event.detail.x, event.detail.y); });
             block.addEventListener('flag', (event) => { this.flag(event.detail.x, event.detail.y); });
             return block;
@@ -196,7 +188,6 @@
             return count;
         }
     }
-    MineSweeper.Block = 'mine-block';
     class MineBlock extends HTMLElement {
         constructor(x, y) {
             super();
@@ -248,7 +239,6 @@
             shadow.appendChild(style);
             shadow.appendChild(panel);
         }
-        static Init(tagname = 'mine-block') { customElements.define(tagname, this); }
         getX() { return this.x; }
         getY() { return this.y; }
         setBomb() { this.bomb = true; }
@@ -280,5 +270,11 @@
         }
     }
     MineBlock.LONGTIME = 500;
-    MineSweeper.Init(script.dataset.tagname, script.dataset.blockname);
+    ((tagname = 'mine-sweeper', blocktag = 'mine-block') => {
+        if (customElements.get(tagname)) {
+            return;
+        }
+        customElements.define(blocktag, MineBlock);
+        customElements.whenDefined(blocktag).then(() => { customElements.define(tagname, MineSweeper); });
+    })(script.dataset.tagname, script.dataset.blockname);
 });

@@ -33,23 +33,17 @@ interface RatingStarElement extends HTMLElement
 	document.addEventListener( 'DOMContentLoaded', () => { init( script ); } );
 } )( <HTMLScriptElement>document.currentScript, ( script: HTMLScriptElement ) =>
 {
-	class RatingStar extends HTMLElement implements RatingStarElement
+	// 今回はタグ名だけでなく、中に使う★のタグ名も指定できるようにします。
+	const startag = script.dataset.star|| 'favorite-button';
+	( ( component, tagname = '' ) =>
 	{
-		private static StarTag = 'favorite-button';
-		// 今回はタグ名だけでなく、中に使う★のタグ名も指定できるようにします。
-		// 第二引数を指定した場合、そのタグが登録されるまで待ちます。
-		public static Init( tagname = 'rating-stars', waittag = this.StarTag )
+		if ( customElements.get( tagname ) ) { return; }
+		customElements.whenDefined( startag ).then( () =>
 		{
-			if ( customElements.get( tagname ) ) { return; }
-			// カスタムエレメントが定義されるまで待ちます。
-			// 今回は内部で使う <favorite-button> が使えるようになるまで待つ処理となります。
-			customElements.whenDefined( waittag ).then( () =>
-			{
-				this.StarTag = waittag;
-				customElements.define( tagname, this );
-			} );
-		}
-
+			customElements.define( tagname, component );
+		} );
+	} )( class extends HTMLElement implements RatingStarElement
+	{
 		// ★を並べる要素
 		private stars: HTMLDivElement;
 		constructor()
@@ -117,7 +111,7 @@ interface RatingStarElement extends HTMLElement
 			// 後はnewすれば要素を作ることができます。
 			// undefinedが返ってくる可能性もありますが、すでに定義されていることは customElements.whenDefined() で確認できているので、チェックもなしに使います。
 			// 今回は on 属性以外はそんなに変わったところもないので、HTMLElmentを返すという想定にしています。
-			const Star = customElements.get( RatingStar.StarTag );
+			const Star = customElements.get( startag );
 			return <HTMLElement>new Star();
 		}
 
@@ -197,7 +191,5 @@ interface RatingStarElement extends HTMLElement
 				case 'rating': this.onUpdateRating( newVal ); break;
 			}
 		}
-	}
-
-	RatingStar.Init( script.dataset.tagname, script.dataset.star );
+	}, script.dataset.tagname );
 } );

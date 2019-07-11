@@ -8,14 +8,12 @@ interface HexMapElement extends HTMLElement
 	document.addEventListener( 'DOMContentLoaded', () => { init( script ); } );
 } )( <HTMLScriptElement>document.currentScript, ( script: HTMLScriptElement ) =>
 {
-	class HexMap extends HTMLElement implements HexMapElement
+	( ( component, tagname = 'hex-map' ) =>
 	{
-		public static Init( tagname = 'hex-map' )
-		{
-			if ( customElements.get( tagname ) ) { return; }
-			customElements.define( tagname, this );
-		}
-
+		if ( customElements.get( tagname ) ) { return; }
+		customElements.define( tagname, component );
+	})( class extends HTMLElement
+	{
 		constructor()
 		{
 			super();
@@ -37,8 +35,5 @@ interface HexMapElement extends HTMLElement
 			shadow.appendChild( style );
 			shadow.appendChild( contents );
 		}
-	}
-
-
-	HexMap.Init( script.dataset.tagname );
+	}, script.dataset.tagname );
 } );

@@ -10,14 +10,12 @@ interface LineTextElement extends HTMLElement
 	document.addEventListener( 'DOMContentLoaded', () => { init( script ); } );
 } )( <HTMLScriptElement>document.currentScript, ( script: HTMLScriptElement ) =>
 {
-	class LineText extends HTMLElement implements LineTextElement
+	( ( component, tagname = 'line-text' ) =>
 	{
-		public static Init( tagname = 'line-text' )
-		{
-			if ( customElements.get( tagname ) ) { return; }
-			customElements.define( tagname, this );
-		}
-
+		if ( customElements.get( tagname ) ) { return; }
+		customElements.define( tagname, component );
+	} )( class extends HTMLElement implements LineTextElement
+	{
 		private str: HTMLElement;
 		private svg: SVGElement;
 		private text: SVGTextElement;
@@ -81,7 +79,5 @@ interface LineTextElement extends HTMLElement
 			if ( oldVal === newVal ) { return; }
 			this.update();
 		}
-	}
-
-	LineText.Init( script.dataset.tagname );
+	}, script.dataset.tagname );
 } );

@@ -35,7 +35,7 @@ interface RatingStarElement extends HTMLElement
 {
 	// 今回はタグ名だけでなく、中に使う★のタグ名も指定できるようにします。
 	const startag = script.dataset.star|| 'favorite-button';
-	( ( component, tagname = '' ) =>
+	( ( component, tagname = 'rating-stars' ) =>
 	{
 		if ( customElements.get( tagname ) ) { return; }
 		customElements.whenDefined( startag ).then( () =>

@@ -5,7 +5,7 @@
     document.addEventListener('DOMContentLoaded', () => { init(script); });
 })(document.currentScript, (script) => {
     const startag = script.dataset.star || 'favorite-button';
-    ((component, tagname = '') => {
+    ((component, tagname = 'rating-stars') => {
         if (customElements.get(tagname)) {
             return;
         }

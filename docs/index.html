@@ -22,6 +22,8 @@
 	<script src="./dice-roll.js"></script>
 	<script src="./scroll-box.js"></script>
 	<script src="./swipe-area.js"></script>
+	<script src="./horizontal-area.js"></script>
+	<script src="./horizontal-item.js"></script>
 	<script src="./hex-chip.js"></script>
 	<script src="./hex-line.js"></script>
 	<script src="./hex-map.js"></script>
@@ -101,6 +103,19 @@ document.getElementById( 'swipearea' ).addEventListener( 'swipe', ( event ) => {
 
 	<h2>rating-stars</h2>
 	<html-code change><rating-stars></rating-stars></html-code>
+
+	<h2 class="wip">horizontal-area / horizontal-item</h2>
+	<html-code change><style>horizontal-item{background:lightgray;}</style>
+<horizontal-area style="height:5rem;--item-width:10rem;">
+	<horizontal-item>1</horizontal-item>
+	<horizontal-item>2</horizontal-item>
+	<horizontal-item>3</horizontal-item>
+	<horizontal-item>4</horizontal-item>
+	<horizontal-item>5</horizontal-item>
+	<horizontal-item>6</horizontal-item>
+	<horizontal-item>7</horizontal-item>
+	<horizontal-item>8</horizontal-item>
+</horizontal-area></html-code>
 
 	<h2 class="wip">hex-chip</h2>
 	<html-code><hex-chip></hex-chip>

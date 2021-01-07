@@ -5,16 +5,6 @@
     document.addEventListener('DOMContentLoaded', () => { init(script); });
 })(document.currentScript, (script) => {
     class CheckList extends HTMLElement {
-        static Init(tagname = 'check-list', itemname = 'check-item') {
-            if (customElements.get(tagname)) {
-                return;
-            }
-            CheckItem.Init(itemname);
-            this.ITEMNAME = itemname.replace(/[a-z]/g, (c) => { return String.fromCharCode(c.charCodeAt(0) & ~32); });
-            customElements.whenDefined(itemname).then(() => {
-                customElements.define(tagname, this);
-            });
-        }
         constructor() {
             super();
             const shadow = this.attachShadow({ mode: 'open' });
@@ -27,6 +17,16 @@
             contents.appendChild(document.createElement('slot'));
             shadow.appendChild(style);
             shadow.appendChild(contents);
+        }
+        static Init(tagname = 'check-list', itemname = 'check-item') {
+            if (customElements.get(tagname)) {
+                return;
+            }
+            CheckItem.Init(itemname);
+            this.ITEMNAME = itemname.replace(/[a-z]/g, (c) => { return String.fromCharCode(c.charCodeAt(0) & ~32); });
+            customElements.whenDefined(itemname).then(() => {
+                customElements.define(tagname, this);
+            });
         }
         get checked() {
             const list = [];

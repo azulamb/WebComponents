@@ -30,8 +30,8 @@ interface LineTextElement extends HTMLElement
 			style.innerHTML =
 			[
 				':host { display: block; --color: black; }',
-				':host > div { position: relative; overflow: hidden; }',
-				':host > div > svg { max-width: 100%; }',
+				':host > div { position: relative; overflow: hidden; display: flex; align-items: center; min-height: 100%; }',
+				':host > div > svg { max-width: 100%; display: block; }',
 				':host > div > span { visibility: hidden; position: absolute; white-space: nowrap; }',
 			].join( '' );
 
@@ -40,8 +40,8 @@ interface LineTextElement extends HTMLElement
 
 			this.text = document.createElementNS( 'http://www.w3.org/2000/svg', 'text' );
 			this.text.setAttribute( 'x', '0' );
-			this.text.setAttribute( 'y', '0' );
-			this.text.setAttribute( 'dominant-baseline', 'text-before-edge' );
+            this.text.setAttribute('y', '50%');
+            this.text.setAttribute('dominant-baseline', 'middle');
 			this.text.setAttribute( 'fill', 'var( --color )' );
 			this.svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
 			this.svg.setAttributeNS( null, 'preserveAspectRatio', 'none' );
@@ -55,7 +55,7 @@ interface LineTextElement extends HTMLElement
 			shadow.appendChild( contents );
 
 			const observer = new MutationObserver( ( records ) => { this.update(); } );
-			observer.observe( this, { characterData: true } );
+            observer.observe( this, { characterData: true, childList: true } );
 
 			this.update();
 		}

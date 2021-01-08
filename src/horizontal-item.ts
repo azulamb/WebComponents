@@ -14,7 +14,7 @@ interface HorizontaItemElement extends HTMLElement
 	{
 		if ( customElements.get( tagname ) ) { return; }
 		customElements.define( tagname, component );
-	} )( class extends HTMLElement
+	} )( class extends HTMLElement implements HorizontaItemElement
 	{
 		constructor()
 		{

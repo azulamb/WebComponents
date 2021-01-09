@@ -46,6 +46,7 @@
             ((stopevent) => {
                 dialogcontents.addEventListener('wheel', stopevent);
                 dialogcontents.addEventListener('contextmenu', stopevent);
+                dialogcontents.addEventListener('click', stopevent);
             })((event) => { event.stopPropagation(); });
             ((onClose) => {
                 this.addEventListener('click', onClose);

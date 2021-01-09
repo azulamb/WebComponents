@@ -70,6 +70,7 @@ interface ModalDialogElement extends HTMLElement
 			{
 				dialogcontents.addEventListener( 'wheel', stopevent );
 				dialogcontents.addEventListener( 'contextmenu', stopevent );
+				dialogcontents.addEventListener( 'click', stopevent );
 			} )( ( event: MouseEvent ) => { event.stopPropagation(); } );
 
 			( ( onClose ) =>

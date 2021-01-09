@@ -65,7 +65,7 @@ interface ToggleButtonElement extends HTMLElement
 
 		attributeChangedCallback( name: string, oldValue: any, newValue: any )
 		{
-			this.checked = !!newValue;
+			this.checked = newValue !== null;
 		}
 	}, script.dataset.tagname );
 } );

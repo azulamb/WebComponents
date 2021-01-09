@@ -46,7 +46,7 @@
         }
         static get observedAttributes() { return ['checked']; }
         attributeChangedCallback(name, oldValue, newValue) {
-            this.checked = !!newValue;
+            this.checked = newValue !== null;
         }
     }, script.dataset.tagname);
 });

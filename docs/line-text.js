@@ -17,7 +17,7 @@
             style.innerHTML =
                 [
                     ':host { display: block; --color: black; --size: 1em; }',
-                    ':host > div { position: relative; overflow: hidden; display: flex; align-items: center; min-height: 100%; }',
+                    ':host > div { position: relative; overflow: hidden; display: flex; align-items: center; min-height: 100%; width: 100%; height: 100%; }',
                     ':host > div > svg { max-width: 100%; display: block; }',
                     ':host > div > span { visibility: hidden; position: absolute; white-space: nowrap; font-size: var( --size ); }',
                 ].join('');

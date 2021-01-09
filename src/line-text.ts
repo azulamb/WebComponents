@@ -29,10 +29,10 @@ interface LineTextElement extends HTMLElement
 			const style = document.createElement( 'style' );
 			style.innerHTML =
 			[
-				':host { display: block; --color: black; }',
+				':host { display: block; --color: black; --size: 1em; }',
 				':host > div { position: relative; overflow: hidden; display: flex; align-items: center; min-height: 100%; }',
 				':host > div > svg { max-width: 100%; display: block; }',
-				':host > div > span { visibility: hidden; position: absolute; white-space: nowrap; }',
+				':host > div > span { visibility: hidden; position: absolute; white-space: nowrap; font-size: var( --size ); }',
 			].join( '' );
 
 			this.str = document.createElement( 'span' );
@@ -43,6 +43,7 @@ interface LineTextElement extends HTMLElement
             this.text.setAttribute('y', '50%');
             this.text.setAttribute('dominant-baseline', 'middle');
 			this.text.setAttribute( 'fill', 'var( --color )' );
+			this.text.setAttribute( 'font-size', 'var( --size )' );
 			this.svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
 			this.svg.setAttributeNS( null, 'preserveAspectRatio', 'none' );
 			this.svg.appendChild( this.text );

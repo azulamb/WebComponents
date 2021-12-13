@@ -40,8 +40,8 @@ interface LineTextElement extends HTMLElement
 
 			this.text = document.createElementNS( 'http://www.w3.org/2000/svg', 'text' );
 			this.text.setAttribute( 'x', '0' );
-            this.text.setAttribute('y', '50%');
-            this.text.setAttribute('dominant-baseline', 'middle');
+			this.text.setAttribute( 'y', '50%');
+			this.text.setAttribute( 'dominant-baseline', 'middle');
 			this.text.setAttribute( 'fill', 'var( --color )' );
 			this.text.setAttribute( 'font-size', 'var( --size )' );
 			this.svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
@@ -56,7 +56,7 @@ interface LineTextElement extends HTMLElement
 			shadow.appendChild( contents );
 
 			const observer = new MutationObserver( ( records ) => { this.update(); } );
-            observer.observe( this, { characterData: true, childList: true } );
+			observer.observe( this, { characterData: true, childList: true } );
 
 			this.update();
 		}

@@ -12,6 +12,8 @@
 	<script src="./html-code.js"></script>
 	<script src="./toggle-button.js"></script>
 	<script src="./favorite-button.js"></script>
+	<script src="./rating-stars.js"></script>
+	<script src="./e-moji.js"></script>
 	<script src="./secret-word.js"></script>
 	<script src="./hide-box.js"></script>
 	<script src="./tweet-button.js"></script>
@@ -29,7 +31,6 @@
 	<script src="./hex-chip.js"></script>
 	<script src="./hex-line.js"></script>
 	<script src="./hex-map.js"></script>
-	<script src="./rating-stars.js"></script>
 	<script src="./shogi-piece.js"></script>
 	<script src="./game-board.js"></script>
 	<script src="./shogi-board.js"></script>
@@ -47,6 +48,15 @@
 
 	<h2>favorite-button</h2>
 	<html-code change><favorite-button></favorite-button></html-code>
+
+	<h2>rating-stars</h2>
+	<html-code change><rating-stars></rating-stars></html-code>
+
+	<h2>e-moji</h2>
+	<html-code change><e-moji value="🐤"></e-moji>
+<e-moji value="A"></e-moji>
+<e-moji value="🐤" style="--size:4rem"></e-moji>
+</html-code>
 
 	<h2>secret-word</h2>
 	<html-code change>山田は<secret-word style="--text:'ネタバレ';">ラスボス</secret-word>です。</html-code>
@@ -109,9 +119,6 @@ document.getElementById( 'swipearea' ).addEventListener( 'swipe', ( event ) => {
 } );
 </script>
 </html-code>
-
-	<h2>rating-stars</h2>
-	<html-code change><rating-stars></rating-stars></html-code>
 
 	<h2>horizontal-area / horizontal-item</h2>
 	<html-code change><style>horizontal-item:nth-child(odd){background:lightgray;}</style>

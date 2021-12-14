@@ -26,9 +26,9 @@
             const style = document.createElement('style');
             style.innerHTML =
                 [
-                    ':host { display: inline-block; --size: 1rem; }',
-                    ':host > div { font-family: Emoji, Blank; width: var( --size ); height: var( --size ); }',
-                    ':host > div > svg { width: 100%; height: 100%; display: block; }',
+                    ':host { display: inline-block; --size: 1rem; --transform: none; }',
+                    ':host > div { font-family: Emoji, Blank; width: var( --size ); height: var( --size ); overflow: hidden; }',
+                    ':host > div > svg { width: 100%; height: 100%; display: block; transform: var( --transform ); }',
                 ].join('');
             this.text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             this.text.setAttribute('x', '0');
@@ -48,19 +48,40 @@
         }
         get value() { return this.getAttribute('value') || ''; }
         set value(value) { this.setAttribute('value', value); }
-        static get observedAttributes() { return ['value']; }
+        get skin() {
+            const s = parseInt(this.getAttribute('skin') || '') || 0;
+            return 1 <= s && s <= 5 ? s : 0;
+        }
+        set skin(value) {
+            if (typeof value !== 'number') {
+                value = parseInt(value + '') || 0;
+            }
+            const num = Math.floor(value);
+            if (!num) {
+                this.removeAttribute('skin');
+                return;
+            }
+            if (1 <= num && num <= 5) {
+                this.setAttribute('skin', num + '');
+                return;
+            }
+        }
+        static get observedAttributes() { return ['value', 'skin']; }
         attributeChangedCallback(attrName, oldVal, newVal) {
             if (oldVal === newVal) {
                 return;
             }
-            if (typeof newVal === 'string') {
-                newVal = [...newVal][0] || '';
-            }
-            this.value = newVal;
             this.update();
         }
         update() {
-            this.text.textContent = this.value;
+            const skin = ((skin) => {
+                if (!skin) {
+                    return '';
+                }
+                console.log(skin);
+                return String.fromCodePoint(127994 + skin);
+            })(this.skin);
+            this.text.textContent = this.value + skin;
         }
     }, script.dataset.tagname);
 });

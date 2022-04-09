@@ -17,6 +17,7 @@
 	<script src="./secret-word.js"></script>
 	<script src="./hide-box.js"></script>
 	<script src="./tweet-button.js"></script>
+	<script src="./twitter-button.js"></script>
 	<script src="./braille-string.js"></script>
 	<script src="./morse-code.js"></script>
 	<script src="./check-list.js"></script>
@@ -70,7 +71,18 @@
 	<html-code change><tweet-button target="_blank"></tweet-button>
 <tweet-button text="テスト" noicon target="_blank">Tweet</tweet-button>
 <tweet-button text="テスト" hashtags="テスト,test" target="_blank">Tweet</tweet-button>
-<tweet-button text="テスト" url="https://www.google.com/" target="_blank">ツイート</tweet-button></html-code>
+<tweet-button text="テスト" url="https://www.google.com/" target="_blank">ツイート</tweet-button>
+<tweet-button text="テスト" target="_blank" disable>Tweet</tweet-button></html-code>
+
+	<h2>twitter-button</h2>
+	<html-code change><twitter-button>ログイン</twitter-button>
+<twitter-button disable>ログイン
+<script>document.querySelectorAll('twitter-button').forEach(( button ) =>
+{
+	button.addEventListener( 'click', () => { alert( 'Click twitter-button!' ); } );
+});</script>
+</twitter-button>
+</html-code>
 
 	<h2 class="wip">braille-string</h2>
 	<html-code change><braille-string>test</braille-string></html-code>

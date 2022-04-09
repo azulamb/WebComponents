@@ -47,7 +47,7 @@ interface ShogiBoardElement extends GameBoardElement {}
 
 	type GameBoardClass = new () => GameBoardElement & { colors: { name: string, var: string, color: string }[] };
 
-	const GameBoard: GameBoardClass = customElements.get( script.dataset.extends || 'game-board' );
+	const GameBoard: GameBoardClass = <{new(): GameBoardElement & { colors: { name: string, var: string, color: string }[] }}>customElements.get( script.dataset.extends || 'game-board' );
 
 	( ( component, tagname = 'shogi-board' ) =>
 	{
@@ -93,7 +93,7 @@ interface ShogiBoardElement extends GameBoardElement {}
 			{
 				// 将棋の駒を文字列で指定されているので、その駒を作る。
 				const name = piece;
-				piece = <ShogiPieceElement>new ( customElements.get( piecetag ) )();
+				piece = new ( <{new(): ShogiPieceElement}>customElements.get( piecetag ) )();
 				piece.piece = <any>name;
 			}
 			// ここに来た時点でpieceは必ずShogiPieceになっています。

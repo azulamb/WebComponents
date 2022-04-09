@@ -45,9 +45,10 @@ interface TweetButtonElement extends HTMLElement
 			const style = document.createElement( 'style' );
 			style.innerHTML =
 			[
-				':host { --padding: 0.1rem 0.4rem; --color: white; display: inline-block; background-color: #1da1f2; color: var( --color ); box-sizing: border-box; border-radius: 0.2rem; overflow: hidden; transition: background-color 0.2s; font-weight: 500; font: normal normal normal 11px/18px "Helvetica Neue",Arial,sans-serif; }',
-				':host( :hover ) { background-color: #1a91da; }',
-				':host( [ disable ] ) > a { user-select: none; pointer: cursor; }',
+				':host { --padding: 0.1rem 0.4rem; --color: white; display: inline-block; background-color: #1da1f2; color: var( --color ); box-sizing: border-box; border-radius: 0.2rem; overflow: hidden; transition: background-color 0.2s; font-weight: 500; font: normal normal normal 11px/18px "Helvetica Neue",Arial,sans-serif; user-select: none; }',
+				':host( :not( [ disable ] ):hover ) { background-color: #1a91da; }',
+				':host( [ disable ] ) { background-color: #8fabbd; }',
+				':host( [ disable ] ) > a { pointer-events: none; }',
 				':host( [ noicon ] ) svg { display: none; }',
 				':host > a { display: flex; justify-content: center; align-items: center; box-sizing: border-box; text-decoration: none; color: inherit; width: 100%; height: 100%; padding: var( --padding ); }',
 				'svg{ width: auto; height: 1rem; }',

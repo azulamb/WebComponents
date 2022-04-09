@@ -49,8 +49,7 @@
             }
         }
         createStar() {
-            const Star = customElements.get(startag);
-            return new Star();
+            return new (customElements.get(startag))();
         }
         convertPositiveNumber(value) {
             if (typeof value !== 'number') {

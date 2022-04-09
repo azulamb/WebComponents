@@ -111,8 +111,7 @@ interface RatingStarElement extends HTMLElement
 			// 後はnewすれば要素を作ることができます。
 			// undefinedが返ってくる可能性もありますが、すでに定義されていることは customElements.whenDefined() で確認できているので、チェックもなしに使います。
 			// 今回は on 属性以外はそんなに変わったところもないので、HTMLElmentを返すという想定にしています。
-			const Star = customElements.get( startag );
-			return <HTMLElement>new Star();
+			return new (<{new(): HTMLElement}>(customElements.get( startag )))();
 		}
 
 		private convertPositiveNumber( value: number|string )

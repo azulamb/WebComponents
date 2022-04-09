@@ -6,13 +6,6 @@ interface HorizontalAreaElement extends HTMLElement
 	goTo( target: number | HTMLElement ): void;
 }
 
-// TODO: Delete
-declare class ResizeObserver
-{
-	constructor( callback: () => void );
-	observe( target: HTMLElement ): void;
-}
-
 ( ( script, init ) =>
 {
 	if ( document.readyState !== 'loading' ) { return init( script ); }

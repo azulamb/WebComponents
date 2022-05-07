@@ -35,6 +35,7 @@ interface InputSliderElement extends HTMLElement {
 				style.innerHTML = [
 					':host { display: inline-block; --input-size: 3rem; }',
 					':host > div { display: grid; grid-template-columns: 1fr var(--input-size); width: 100%; height: 100%; }',
+					':host > div > input { font-size: 1em; }',
 				].join('');
 
 				this.slider = document.createElement('input');

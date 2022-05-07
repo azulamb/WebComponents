@@ -55,7 +55,6 @@
                         clearTimeout(timer);
                     }
                     timer = setTimeout(() => {
-                        this.onChange();
                         timer = 0;
                         this.dispatchEvent(new CustomEvent('change'));
                     }, 0);
@@ -75,7 +74,6 @@
             shadow.appendChild(style);
             shadow.appendChild(contents);
         }
-        onChange() { }
         get min() {
             return parseFloat(this.input.min || '') || 1;
         }
@@ -109,7 +107,7 @@
                 change = true;
             }
             if (change) {
-                this.setAttribute('min', setValue);
+                this.setAttribute('max', setValue);
             }
         }
         get step() {

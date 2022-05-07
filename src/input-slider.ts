@@ -78,7 +78,6 @@ interface InputSliderElement extends HTMLElement {
 							clearTimeout(timer);
 						}
 						timer = setTimeout(() => {
-							this.onChange();
 							timer = 0;
 							this.dispatchEvent(new CustomEvent('change'));
 						}, 0);
@@ -100,8 +99,6 @@ interface InputSliderElement extends HTMLElement {
 				shadow.appendChild(style);
 				shadow.appendChild(contents);
 			}
-
-			protected onChange() {}
 
 			get min() {
 				return parseFloat(this.input.min || '') || 1;
@@ -137,7 +134,7 @@ interface InputSliderElement extends HTMLElement {
 					change = true;
 				}
 				if (change) {
-					this.setAttribute('min', setValue);
+					this.setAttribute('max', setValue);
 				}
 			}
 

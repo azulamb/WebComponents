@@ -2,7 +2,9 @@
     if (document.readyState !== 'loading') {
         return init(script);
     }
-    document.addEventListener('DOMContentLoaded', () => { init(script); });
+    document.addEventListener('DOMContentLoaded', () => {
+        init(script);
+    });
 })(document.currentScript, (script) => {
     ((component, tagname = 'line-text') => {
         if (customElements.get(tagname)) {
@@ -14,13 +16,12 @@
             super();
             const shadow = this.attachShadow({ mode: 'open' });
             const style = document.createElement('style');
-            style.innerHTML =
-                [
-                    ':host { display: block; --color: black; --size: 1em; }',
-                    ':host > div { position: relative; overflow: hidden; display: flex; align-items: center; min-height: 100%; width: 100%; height: 100%; }',
-                    ':host > div > svg { max-width: 100%; display: block; }',
-                    ':host > div > span { visibility: hidden; position: absolute; white-space: nowrap; font-size: var( --size ); }',
-                ].join('');
+            style.innerHTML = [
+                ':host { display: block; --color: black; --size: 1em; }',
+                ':host > div { position: relative; overflow: hidden; display: flex; align-items: center; min-height: 100%; width: 100%; height: 100%; }',
+                ':host > div > svg { max-width: 100%; display: block; }',
+                ':host > div > span { visibility: hidden; position: absolute; white-space: nowrap; font-size: var( --size ); }',
+            ].join('');
             this.str = document.createElement('span');
             this.str.appendChild(document.createElement('slot'));
             this.text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -37,7 +38,9 @@
             contents.appendChild(this.svg);
             shadow.appendChild(style);
             shadow.appendChild(contents);
-            const observer = new MutationObserver((records) => { this.update(); });
+            const observer = new MutationObserver((records) => {
+                this.update();
+            });
             observer.observe(this, { characterData: true, childList: true });
             this.update();
         }
@@ -49,7 +52,9 @@
             this.svg.setAttributeNS(null, 'height', height + 'px');
             this.svg.setAttributeNS(null, 'viewBox', '0 0 ' + width + ' ' + height);
         }
-        static get observedAttributes() { return ['style']; }
+        static get observedAttributes() {
+            return ['style'];
+        }
         attributeChangedCallback(attrName, oldVal, newVal) {
             if (oldVal === newVal) {
                 return;

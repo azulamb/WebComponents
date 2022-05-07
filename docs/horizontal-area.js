@@ -2,7 +2,9 @@
     if (document.readyState !== 'loading') {
         return init(script);
     }
-    document.addEventListener('DOMContentLoaded', () => { init(script); });
+    document.addEventListener('DOMContentLoaded', () => {
+        init(script);
+    });
 })(document.currentScript, (script) => {
     ((component, tagname = 'horizontal-area') => {
         if (customElements.get(tagname)) {
@@ -23,16 +25,15 @@
             })();
             const shadow = this.attachShadow({ mode: 'open' });
             const style = document.createElement('style');
-            style.innerHTML =
-                [
-                    ':host { --item-width: ""; --default-direction: ltr; --reverse-direction: rtl; display: block; }',
-                    ':host > div { width: 100%; height: 100%; overflow: hidden; }',
-                    ':host > div > div { overflow-y: scroll; overflow-x: hidden; scroll-behavior: smooth; transform: translateX( -100% ) rotate( -90deg ); transform-origin: right top; }',
-                    ':host( :not( [ noscrollbar ] ) ) > div > div { direction: var( --reverse-direction ); }',
-                    '::slotted( * ) { direction: var( --default-direction ); }',
-                    ':host( [ noscrollbar ] ) > div > div { -ms-overflow-style: none; scrollbar-width: none; }',
-                    ':host( [ noscrollbar ] ) > div > div::-webkit-scrollbar { display:none; }',
-                ].join('');
+            style.innerHTML = [
+                ':host { --item-width: ""; --default-direction: ltr; --reverse-direction: rtl; display: block; }',
+                ':host > div { width: 100%; height: 100%; overflow: hidden; }',
+                ':host > div > div { overflow-y: scroll; overflow-x: hidden; scroll-behavior: smooth; transform: translateX( -100% ) rotate( -90deg ); transform-origin: right top; }',
+                ':host( :not( [ noscrollbar ] ) ) > div > div { direction: var( --reverse-direction ); }',
+                '::slotted( * ) { direction: var( --default-direction ); }',
+                ':host( [ noscrollbar ] ) > div > div { -ms-overflow-style: none; scrollbar-width: none; }',
+                ':host( [ noscrollbar ] ) > div > div::-webkit-scrollbar { display:none; }',
+            ].join('');
             this.wrapper = document.createElement('div');
             this.wrapper.appendChild(document.createElement('slot'));
             this.contents = document.createElement('div');
@@ -50,14 +51,18 @@
             const s = this.noscrollbar ? 0 : this.scrollbar;
             this.style.setProperty('--item-height', `${Math.ceil(this.contents.clientHeight - s)}px`);
         }
-        static get observedAttributes() { return ['noscrollbar']; }
+        static get observedAttributes() {
+            return ['noscrollbar'];
+        }
         attributeChangedCallback(name, oldValue, newValue) {
             if ((oldValue !== null) === (newValue !== null)) {
                 return;
             }
             this.noscrollbar = newValue !== null;
         }
-        get noscrollbar() { return this.hasAttribute('noscrollbar'); }
+        get noscrollbar() {
+            return this.hasAttribute('noscrollbar');
+        }
         set noscrollbar(value) {
             value ? this.setAttribute('noscrollbar', 'noscrollbar') : this.removeAttribute('noscrollbar');
             this.update();

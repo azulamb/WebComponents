@@ -2,7 +2,9 @@
     if (document.readyState !== 'loading') {
         return init(script);
     }
-    document.addEventListener('DOMContentLoaded', () => { init(script); });
+    document.addEventListener('DOMContentLoaded', () => {
+        init(script);
+    });
 })(document.currentScript, (script) => {
     class MineSweeper extends HTMLElement {
         constructor() {
@@ -40,9 +42,8 @@
                 span.textContent = text;
                 return span;
             }
-            if (bombs <= 0) {
+            if (bombs <= 0)
                 bombs = this.calcBombs(width, height);
-            }
             this.width = createNumInput(width);
             this.height = createNumInput(height);
             this.bombs = createNumInput(bombs);
@@ -64,8 +65,12 @@
         }
         createBlock(x, y) {
             const block = new MineBlock(x, y);
-            block.addEventListener('open', (event) => { this.open(event.detail.x, event.detail.y); });
-            block.addEventListener('flag', (event) => { this.flag(event.detail.x, event.detail.y); });
+            block.addEventListener('open', (event) => {
+                this.open(event.detail.x, event.detail.y);
+            });
+            block.addEventListener('flag', (event) => {
+                this.flag(event.detail.x, event.detail.y);
+            });
             return block;
         }
         updateBoard() {
@@ -132,8 +137,12 @@
             const bombs = this.maxbombs - flags;
             this.bombs.value = bombs + '';
         }
-        gameover() { this.setAttribute('game', 'over'); }
-        gameclear() { this.setAttribute('game', 'clear'); }
+        gameover() {
+            this.setAttribute('game', 'over');
+        }
+        gameclear() {
+            this.setAttribute('game', 'clear');
+        }
         getCanOpenBlocks(blocks, x, y, width, height) {
             const nobombs = [];
             const search = [blocks[y * width + x]];
@@ -173,18 +182,18 @@
                     if (a === x && b === y) {
                         continue;
                     }
-                    if (blocks[b * width + a].isBomb()) {
+                    if (blocks[b * width + a].isBomb())
                         ++count;
-                    }
                 }
             }
             return count;
         }
         countBlock(blocks) {
             let count = 0;
-            blocks.forEach((block) => { if (!block.isOpen()) {
-                ++count;
-            } });
+            blocks.forEach((block) => {
+                if (!block.isOpen())
+                    ++count;
+            });
             return count;
         }
     }
@@ -222,7 +231,10 @@
                     timer = 0;
                     return this.flag();
                 }
-                timer = setTimeout(() => { timer = 0; this.flag(); }, MineBlock.LONGTIME);
+                timer = setTimeout(() => {
+                    timer = 0;
+                    this.flag();
+                }, MineBlock.LONGTIME);
             });
             block.addEventListener('mouseup', (event) => {
                 event.preventDefault();
@@ -233,18 +245,32 @@
                 clearTimeout(timer);
                 timer = 0;
             });
-            block.addEventListener('contextmenu', (event) => { event.preventDefault(); });
+            block.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+            });
             const panel = document.createElement('div');
             panel.appendChild(block);
             shadow.appendChild(style);
             shadow.appendChild(panel);
         }
-        getX() { return this.x; }
-        getY() { return this.y; }
-        setBomb() { this.bomb = true; }
-        isBomb() { return this.bomb; }
-        isOpen() { return this.hasAttribute('open'); }
-        hasFlag() { return this.hasAttribute('flag'); }
+        getX() {
+            return this.x;
+        }
+        getY() {
+            return this.y;
+        }
+        setBomb() {
+            this.bomb = true;
+        }
+        isBomb() {
+            return this.bomb;
+        }
+        isOpen() {
+            return this.hasAttribute('open');
+        }
+        hasFlag() {
+            return this.hasAttribute('flag');
+        }
         open(bombs) {
             this.setAttribute('open', '');
             if (this.isBomb()) {
@@ -275,6 +301,8 @@
             return;
         }
         customElements.define(blocktag, MineBlock);
-        customElements.whenDefined(blocktag).then(() => { customElements.define(tagname, MineSweeper); });
+        customElements.whenDefined(blocktag).then(() => {
+            customElements.define(tagname, MineSweeper);
+        });
     })(script.dataset.tagname, script.dataset.blockname);
 });

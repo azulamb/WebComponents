@@ -11,6 +11,7 @@
 	<link rel="apple-touch-icon" sizes="152x152" href="./apple-touch-icon-precomposed.png">-->
 	<script src="./html-code.js"></script>
 	<script src="./toggle-button.js"></script>
+	<script src="./input-slider.js"></script>
 	<script src="./favorite-button.js"></script>
 	<script src="./rating-stars.js"></script>
 	<script src="./e-moji.js"></script>
@@ -47,6 +48,16 @@
 <toggle-button style="--height:2rem;"></toggle-button>
 <toggle-button style="--height:2rem;width:5rem;"></toggle-button></html-code>
 
+	<h2>toggle-button</h2>
+	<html-code change><input-slider></input-slider>
+<input-slider id="slider" min="-10" max="10" value="0" step="0.5"></input-slider>
+<script>
+document.getElementById('slider').addEventListener( 'change', ( event ) => {
+	console.log( event.target.value );
+} );
+</script>
+</html-code>
+
 	<h2>favorite-button</h2>
 	<html-code change><favorite-button></favorite-button></html-code>
 
@@ -72,11 +83,11 @@
 <tweet-button text="テスト" noicon target="_blank">Tweet</tweet-button>
 <tweet-button text="テスト" hashtags="テスト,test" target="_blank">Tweet</tweet-button>
 <tweet-button text="テスト" url="https://www.google.com/" target="_blank">ツイート</tweet-button>
-<tweet-button text="テスト" target="_blank" disable>Tweet</tweet-button></html-code>
+<tweet-button text="テスト" target="_blank" disabled>Tweet</tweet-button></html-code>
 
 	<h2>twitter-button</h2>
 	<html-code change><twitter-button>ログイン</twitter-button>
-<twitter-button disable>ログイン
+<twitter-button disabled>ログイン
 <script>document.querySelectorAll('twitter-button').forEach(( button ) =>
 {
 	button.addEventListener( 'click', () => { alert( 'Click twitter-button!' ); } );

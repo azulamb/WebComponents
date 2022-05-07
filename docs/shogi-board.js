@@ -2,7 +2,9 @@
     if (document.readyState !== 'loading') {
         return init(script);
     }
-    document.addEventListener('DOMContentLoaded', () => { init(script); });
+    document.addEventListener('DOMContentLoaded', () => {
+        init(script);
+    });
 })(document.currentScript, (script) => {
     const piecetag = script.dataset.piece || 'shogi-piece';
     const GameBoard = customElements.get(script.dataset.extends || 'game-board');
@@ -36,12 +38,10 @@
                 piece = new (customElements.get(piecetag))();
                 piece.piece = name;
             }
-            if (enemy !== undefined) {
+            if (enemy !== undefined)
                 piece.enemy = !!enemy;
-            }
-            if (piece !== undefined) {
+            if (piece !== undefined)
                 piece.reverse = !!reverse;
-            }
             piece.dataset.position = 'x' + x + 'y' + y;
             this.appendChild(piece);
         }

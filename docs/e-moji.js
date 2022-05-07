@@ -12,7 +12,9 @@
     if (document.readyState !== 'loading') {
         return init(script);
     }
-    document.addEventListener('DOMContentLoaded', () => { init(script); });
+    document.addEventListener('DOMContentLoaded', () => {
+        init(script);
+    });
 })(document.currentScript, (script) => {
     ((component, tagname = 'e-moji') => {
         if (customElements.get(tagname)) {
@@ -24,12 +26,11 @@
             super();
             const shadow = this.attachShadow({ mode: 'open' });
             const style = document.createElement('style');
-            style.innerHTML =
-                [
-                    ':host { display: inline-block; --size: 1rem; --transform: none; }',
-                    ':host > div { font-family: Emoji, Blank; width: var( --size ); height: var( --size ); overflow: hidden; }',
-                    ':host > div > svg { width: 100%; height: 100%; display: block; transform: var( --transform ); }',
-                ].join('');
+            style.innerHTML = [
+                ':host { display: inline-block; --size: 1rem; --transform: none; }',
+                ':host > div { font-family: Emoji, Blank; width: var( --size ); height: var( --size ); overflow: hidden; }',
+                ':host > div > svg { width: 100%; height: 100%; display: block; transform: var( --transform ); }',
+            ].join('');
             this.text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             this.text.setAttribute('x', '0');
             this.text.setAttribute('y', '50%');
@@ -46,8 +47,12 @@
             shadow.appendChild(style);
             shadow.appendChild(contents);
         }
-        get value() { return this.getAttribute('value') || ''; }
-        set value(value) { this.setAttribute('value', value); }
+        get value() {
+            return this.getAttribute('value') || '';
+        }
+        set value(value) {
+            this.setAttribute('value', value);
+        }
         get skin() {
             const s = parseInt(this.getAttribute('skin') || '') || 0;
             return 1 <= s && s <= 5 ? s : 0;
@@ -66,7 +71,9 @@
                 return;
             }
         }
-        static get observedAttributes() { return ['value', 'skin']; }
+        static get observedAttributes() {
+            return ['value', 'skin'];
+        }
         attributeChangedCallback(attrName, oldVal, newVal) {
             if (oldVal === newVal) {
                 return;
@@ -78,7 +85,6 @@
                 if (!skin) {
                     return '';
                 }
-                console.log(skin);
                 return String.fromCodePoint(127994 + skin);
             })(this.skin);
             this.text.textContent = this.value + skin;

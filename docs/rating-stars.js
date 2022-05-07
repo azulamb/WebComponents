@@ -2,7 +2,9 @@
     if (document.readyState !== 'loading') {
         return init(script);
     }
-    document.addEventListener('DOMContentLoaded', () => { init(script); });
+    document.addEventListener('DOMContentLoaded', () => {
+        init(script);
+    });
 })(document.currentScript, (script) => {
     const startag = script.dataset.star || 'favorite-button';
     ((component, tagname = 'rating-stars') => {
@@ -17,11 +19,10 @@
             super();
             const shadow = this.attachShadow({ mode: 'open' });
             const style = document.createElement('style');
-            style.innerHTML =
-                [
-                    ':host { display: block; overflow: hidden; width: fit-content; height: fit-content; }',
-                    ':host > div { display: flex; }',
-                ].join('');
+            style.innerHTML = [
+                ':host { display: block; overflow: hidden; width: fit-content; height: fit-content; }',
+                ':host > div { display: flex; }',
+            ].join('');
             this.stars = document.createElement('div');
             if (!this.hasAttribute('length')) {
                 this.length = 5;
@@ -63,13 +64,19 @@
             }
             return 0;
         }
-        get length() { return this.convertPositiveNumber(this.getAttribute('length') || ''); }
-        set length(value) { this.setAttribute('length', this.convertPositiveNumber(value) + ''); }
+        get length() {
+            return this.convertPositiveNumber(this.getAttribute('length') || '');
+        }
+        set length(value) {
+            this.setAttribute('length', this.convertPositiveNumber(value) + '');
+        }
         onUpdateLength(value) {
             this.length = value;
             this.updateStars();
         }
-        get rating() { return this.convertPositiveNumber(this.getAttribute('rating') || ''); }
+        get rating() {
+            return this.convertPositiveNumber(this.getAttribute('rating') || '');
+        }
         set rating(value) {
             const max = this.length;
             const rating = Math.min(this.convertPositiveNumber(value), max);
@@ -87,7 +94,9 @@
             this.rating = value;
             this.dispatchEvent(new Event('change'));
         }
-        static get observedAttributes() { return ['length', 'rating']; }
+        static get observedAttributes() {
+            return ['length', 'rating'];
+        }
         attributeChangedCallback(attrName, oldVal, newVal) {
             if (oldVal === newVal) {
                 return;

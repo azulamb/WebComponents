@@ -2,7 +2,9 @@
     if (document.readyState !== 'loading') {
         return init(script);
     }
-    document.addEventListener('DOMContentLoaded', () => { init(script); });
+    document.addEventListener('DOMContentLoaded', () => {
+        init(script);
+    });
 })(document.currentScript, (script) => {
     const Table = {};
     function AddTable(lang, table) {
@@ -26,7 +28,9 @@
             this.contents = document.createElement('div');
             shadow.appendChild(style);
             shadow.appendChild(this.contents);
-            const observer = new MutationObserver((mutations) => { this.update(); });
+            const observer = new MutationObserver((mutations) => {
+                this.update();
+            });
             observer.observe(this, { childList: true });
             this.update();
         }
@@ -47,9 +51,13 @@
                 return;
             }
             const strings = Array.from(this.textContent || '');
-            this.contents.textContent = strings.map((char) => { return this.numToBraille(table[char] || 0); }).join('');
+            this.contents.textContent = strings.map((char) => {
+                return this.numToBraille(table[char] || 0);
+            }).join('');
         }
-        static get observedAttributes() { return ['lang']; }
+        static get observedAttributes() {
+            return ['lang'];
+        }
         attributeChangedCallback(attrName, oldVal, newVal) {
             if (oldVal === newVal) {
                 return;

@@ -21,174 +21,192 @@ const element = new RatingStar();
     * 評価変更時に発生するイベントです。
 */
 
-interface RatingStarElement extends HTMLElement
-{
+interface RatingStarElement extends HTMLElement {
 	length: number;
 	rating: number;
 }
 
-( ( script, init ) =>
-{
-	if ( document.readyState !== 'loading' ) { return init( script ); }
-	document.addEventListener( 'DOMContentLoaded', () => { init( script ); } );
-} )( <HTMLScriptElement>document.currentScript, ( script: HTMLScriptElement ) =>
-{
+((script, init) => {
+	if (document.readyState !== 'loading') {
+		return init(script);
+	}
+	document.addEventListener('DOMContentLoaded', () => {
+		init(script);
+	});
+})(<HTMLScriptElement> document.currentScript, (script: HTMLScriptElement) => {
 	// 今回はタグ名だけでなく、中に使う★のタグ名も指定できるようにします。
-	const startag = script.dataset.star|| 'favorite-button';
-	( ( component, tagname = 'rating-stars' ) =>
-	{
-		if ( customElements.get( tagname ) ) { return; }
-		customElements.whenDefined( startag ).then( () =>
-		{
-			customElements.define( tagname, component );
-		} );
-	} )( class extends HTMLElement implements RatingStarElement
-	{
-		// ★を並べる要素
-		private stars: HTMLDivElement;
-		constructor()
-		{
-			super();
-
-			const shadow = this.attachShadow( { mode: 'open' } );
-
-			const style = document.createElement( 'style' );
-			style.innerHTML =
-			[
-				':host { display: block; overflow: hidden; width: fit-content; height: fit-content; }',
-				':host > div { display: flex; }',
-			].join( '' );
-
-			this.stars = document.createElement( 'div' );
-
-			// ★の数を調整します。
-			// まず最大値が設定されていない場合は、デフォルト値5にします。
-			if ( !this.hasAttribute( 'length' ) ) { this.length = 5; }
-			// ★を並べます。
-			this.updateStars();
-
-			shadow.appendChild( style );
-			shadow.appendChild( this.stars );
+	const startag = script.dataset.star || 'favorite-button';
+	((component, tagname = 'rating-stars') => {
+		if (customElements.get(tagname)) {
+			return;
 		}
+		customElements.whenDefined(startag).then(() => {
+			customElements.define(tagname, component);
+		});
+	})(
+		class extends HTMLElement implements RatingStarElement {
+			// ★を並べる要素
+			private stars: HTMLDivElement;
+			constructor() {
+				super();
 
-		// ★の数などを調整最新の状態にします。
-		private updateStars()
-		{
-			const stars = this.stars.children;
-			const max = this.length;
+				const shadow = this.attachShadow({ mode: 'open' });
 
-			// ★が多い場合は削ります。
-			for ( let i = stars.length - 1 ; max <= i ; --i ) { this.stars.removeChild( stars[ i ] ); }
+				const style = document.createElement('style');
+				style.innerHTML = [
+					':host { display: block; overflow: hidden; width: fit-content; height: fit-content; }',
+					':host > div { display: flex; }',
+				].join('');
 
-			// ★が少ない場合は追加しつつイベントを設定します。
-			for ( let i = stars.length; i < max; ++i )
-			{
-				// ★を生成します。
-				const star = this.createStar();
+				this.stars = document.createElement('div');
 
-				// 評価値を設定します。
-				// 例えば2番目の★には2という値が入っていて、クリック時に評価値を2に設定するという流れで動作します。
-				star.dataset.rating = ( i + 1 ) + '';
+				// ★の数を調整します。
+				// まず最大値が設定されていない場合は、デフォルト値5にします。
+				if (!this.hasAttribute('length')) {
+					this.length = 5;
+				}
+				// ★を並べます。
+				this.updateStars();
 
-				// クリック時のイベントを追加します。
-				star.addEventListener( 'click', ( event ) =>
-				{
-					// 評価を設定します。
-					this.rating = parseInt( <string>(<HTMLElement>event.target).dataset.rating );
-				} );
-
-				this.stars.appendChild( star );
+				shadow.appendChild(style);
+				shadow.appendChild(this.stars);
 			}
 
-			// 評価が最大値より大きい場合は削ります。
-			if ( this.length < this.rating ) { this.rating = this.length; }
-		}
+			// ★の数などを調整最新の状態にします。
+			private updateStars() {
+				const stars = this.stars.children;
+				const max = this.length;
 
-		// ★のタグを生成して返します。
-		private createStar()
-		{
-			// customElements.get( タグ名 ) でタグと関連付けられたコンストラクタを取得します。
-			// 後はnewすれば要素を作ることができます。
-			// undefinedが返ってくる可能性もありますが、すでに定義されていることは customElements.whenDefined() で確認できているので、チェックもなしに使います。
-			// 今回は on 属性以外はそんなに変わったところもないので、HTMLElmentを返すという想定にしています。
-			return new (<{new(): HTMLElement}>(customElements.get( startag )))();
-		}
+				// ★が多い場合は削ります。
+				for (let i = stars.length - 1; max <= i; --i) {
+					this.stars.removeChild(stars[i]);
+				}
 
-		private convertPositiveNumber( value: number|string )
-		{
-			if ( typeof value !== 'number' )
-			{
-				// とりあえず数値に直します。
-				value = parseInt( value );
+				// ★が少ない場合は追加しつつイベントを設定します。
+				for (let i = stars.length; i < max; ++i) {
+					// ★を生成します。
+					const star = this.createStar();
+
+					// 評価値を設定します。
+					// 例えば2番目の★には2という値が入っていて、クリック時に評価値を2に設定するという流れで動作します。
+					star.dataset.rating = (i + 1) + '';
+
+					// クリック時のイベントを追加します。
+					star.addEventListener('click', (event) => {
+						// 評価を設定します。
+						this.rating = parseInt(<string> (<HTMLElement> event.target).dataset.rating);
+					});
+
+					this.stars.appendChild(star);
+				}
+
+				// 評価が最大値より大きい場合は削ります。
+				if (this.length < this.rating) {
+					this.rating = this.length;
+				}
 			}
 
-			// とりあえず数が多くても困るので、0以上20以下の値域にすることにします。
-
-			// もし20より大きいなら20にする。
-			if ( 20 < value ) { return 20; }
-
-			// 0以上なら20以下確定なのでそのまま返す。
-			if ( 0 <= value ) { return value; }
-
-			// それ以外は0にする。
-			return 0;
-		}
-
-		// lengthプロパティの追加。
-		// これは★の最大数ということにします。
-		get length() { return this.convertPositiveNumber( this.getAttribute( 'length' ) || '' ); }
-		set length( value ) { this.setAttribute( 'length', this.convertPositiveNumber( value ) + '' ); }
-
-		// length属性が変化した場合の対応。
-		private onUpdateLength( value: string|number )
-		{
-			this.length = <number>value;
-			// 星の数を更新します。
-			this.updateStars();
-		}
-
-		// ratingプロパティの追加。
-		// これは★の数の設定になります。
-		get rating() { return this.convertPositiveNumber( this.getAttribute( 'rating' ) || '' ); }
-		set rating( value )
-		{
-			// ★の最大数
-			const max = this.length;
-			// 設定する評価と★の最大数のうち、小さい方を設定する評価にします。
-			const rating = Math.min( this.convertPositiveNumber( value ), max );
-
-			const stars = this.stars.children;
-			// ★をつけていきます。
-			let i = 0;
-			for ( ; i < rating; ++i ) { stars[ i ].setAttribute( 'on', 'on' ); }
-			// 不要な★を消していきます。
-			for ( ; i < max ; ++i ) { stars[ i ].removeAttribute( 'on' ); }
-
-			// 最後に評価を設定します。
-			this.setAttribute( 'rating', rating + '' );
-		}
-
-		// rating属性が変化した時の対応です。
-		private onUpdateRating( value: string|number )
-		{
-			this.rating = <number>value;
-
-			// 変更を通知します。
-			this.dispatchEvent( new Event( 'change' ) );
-		}
-
-		static get observedAttributes() { return [ 'length', 'rating' ]; }
-
-		public attributeChangedCallback( attrName: string, oldVal: any , newVal: any )
-		{
-			// 更新がない場合は何もしないことにします。
-			if ( oldVal === newVal ) { return; }
-
-			switch ( attrName )
-			{
-				case 'length': this.onUpdateLength( newVal ); break;
-				case 'rating': this.onUpdateRating( newVal ); break;
+			// ★のタグを生成して返します。
+			private createStar() {
+				// customElements.get( タグ名 ) でタグと関連付けられたコンストラクタを取得します。
+				// 後はnewすれば要素を作ることができます。
+				// undefinedが返ってくる可能性もありますが、すでに定義されていることは customElements.whenDefined() で確認できているので、チェックもなしに使います。
+				// 今回は on 属性以外はそんなに変わったところもないので、HTMLElmentを返すという想定にしています。
+				return new (<{ new (): HTMLElement }> (customElements.get(startag)))();
 			}
-		}
-	}, script.dataset.tagname );
-} );
+
+			private convertPositiveNumber(value: number | string) {
+				if (typeof value !== 'number') {
+					// とりあえず数値に直します。
+					value = parseInt(value);
+				}
+
+				// とりあえず数が多くても困るので、0以上20以下の値域にすることにします。
+
+				// もし20より大きいなら20にする。
+				if (20 < value) {
+					return 20;
+				}
+
+				// 0以上なら20以下確定なのでそのまま返す。
+				if (0 <= value) {
+					return value;
+				}
+
+				// それ以外は0にする。
+				return 0;
+			}
+
+			// lengthプロパティの追加。
+			// これは★の最大数ということにします。
+			get length() {
+				return this.convertPositiveNumber(this.getAttribute('length') || '');
+			}
+			set length(value) {
+				this.setAttribute('length', this.convertPositiveNumber(value) + '');
+			}
+
+			// length属性が変化した場合の対応。
+			private onUpdateLength(value: string | number) {
+				this.length = <number> value;
+				// 星の数を更新します。
+				this.updateStars();
+			}
+
+			// ratingプロパティの追加。
+			// これは★の数の設定になります。
+			get rating() {
+				return this.convertPositiveNumber(this.getAttribute('rating') || '');
+			}
+			set rating(value) {
+				// ★の最大数
+				const max = this.length;
+				// 設定する評価と★の最大数のうち、小さい方を設定する評価にします。
+				const rating = Math.min(this.convertPositiveNumber(value), max);
+
+				const stars = this.stars.children;
+				// ★をつけていきます。
+				let i = 0;
+				for (; i < rating; ++i) {
+					stars[i].setAttribute('on', 'on');
+				}
+				// 不要な★を消していきます。
+				for (; i < max; ++i) {
+					stars[i].removeAttribute('on');
+				}
+
+				// 最後に評価を設定します。
+				this.setAttribute('rating', rating + '');
+			}
+
+			// rating属性が変化した時の対応です。
+			private onUpdateRating(value: string | number) {
+				this.rating = <number> value;
+
+				// 変更を通知します。
+				this.dispatchEvent(new Event('change'));
+			}
+
+			static get observedAttributes() {
+				return ['length', 'rating'];
+			}
+
+			public attributeChangedCallback(attrName: string, oldVal: any, newVal: any) {
+				// 更新がない場合は何もしないことにします。
+				if (oldVal === newVal) {
+					return;
+				}
+
+				switch (attrName) {
+					case 'length':
+						this.onUpdateLength(newVal);
+						break;
+					case 'rating':
+						this.onUpdateRating(newVal);
+						break;
+				}
+			}
+		},
+		script.dataset.tagname,
+	);
+});

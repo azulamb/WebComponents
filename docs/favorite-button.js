@@ -2,7 +2,9 @@
     if (document.readyState !== 'loading') {
         return init(script);
     }
-    document.addEventListener('DOMContentLoaded', () => { init(script); });
+    document.addEventListener('DOMContentLoaded', () => {
+        init(script);
+    });
 })(document.currentScript, (script) => {
     ((component, tagname = 'favorite-button') => {
         if (customElements.get(tagname)) {
@@ -14,13 +16,12 @@
             super();
             const shadow = this.attachShadow({ mode: 'open' });
             const style = document.createElement('style');
-            style.innerHTML =
-                [
-                    ':host { display: inline-block; cursor: pointer; }',
-                    ':host > div { color: var( --color, orange ); }',
-                    ':host > div::before { content: "☆"; }',
-                    ':host( [ on ] ) > div::before { content: "★"; }',
-                ].join('');
+            style.innerHTML = [
+                ':host { display: inline-block; cursor: pointer; }',
+                ':host > div { color: var( --color, orange ); }',
+                ':host > div::before { content: "☆"; }',
+                ':host( [ on ] ) > div::before { content: "★"; }',
+            ].join('');
             const div = document.createElement('div');
             div.addEventListener('click', () => {
                 this.toggleAttribute('on');

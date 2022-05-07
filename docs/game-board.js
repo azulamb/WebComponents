@@ -2,7 +2,9 @@
     if (document.readyState !== 'loading') {
         return init(script);
     }
-    document.addEventListener('DOMContentLoaded', () => { init(script); });
+    document.addEventListener('DOMContentLoaded', () => {
+        init(script);
+    });
 })(document.currentScript, (script) => {
     ((component, tagname = 'game-board') => {
         if (customElements.get(tagname)) {
@@ -19,19 +21,18 @@
             this.board.classList.add('board');
             this.initBoard();
             const style = document.createElement('style');
-            style.innerHTML =
-                [
-                    ':host { display: block; overflow: hidden; width: 100%; height: fit-content; --border-color: var( --border, black ); }',
-                    ':host > div.main { width: 100%; padding: 100% 0 0; position: relative; overflow: hidden; }',
-                    ':host > div.top, :host > div.bottom { position: relative; width: 100%; height: fit-content; }',
-                    ':host > div.top {}',
-                    ':host > div.bottom {}',
-                    ':host > div > div { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }',
-                    'div.board { display: grid; box-sizing: border-box; border: 1px solid var( --border-color ); }',
-                    'div.board > div { width: 100%; height: 100%; border-right: 1px solid var( --border-color ); border-bottom: 1px solid var( --border-color ); }',
-                    '::slotted( :not( [slot] ) ) { position: absolute; transition: top 0.5s, left 0.5s; }',
-                    '::slotted( [slot] ) { display: inline-block; }',
-                ].join('');
+            style.innerHTML = [
+                ':host { display: block; overflow: hidden; width: 100%; height: fit-content; --border-color: var( --border, black ); }',
+                ':host > div.main { width: 100%; padding: 100% 0 0; position: relative; overflow: hidden; }',
+                ':host > div.top, :host > div.bottom { position: relative; width: 100%; height: fit-content; }',
+                ':host > div.top {}',
+                ':host > div.bottom {}',
+                ':host > div > div { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }',
+                'div.board { display: grid; box-sizing: border-box; border: 1px solid var( --border-color ); }',
+                'div.board > div { width: 100%; height: 100%; border-right: 1px solid var( --border-color ); border-bottom: 1px solid var( --border-color ); }',
+                '::slotted( :not( [slot] ) ) { position: absolute; transition: top 0.5s, left 0.5s; }',
+                '::slotted( [slot] ) { display: inline-block; }',
+            ].join('');
             this.updateBoard();
             const contents = document.createElement('div');
             contents.classList.add('contents');
@@ -97,19 +98,22 @@
                 (x - 1) + ' ) / ' + this.width + ' ); top: calc( 100% ' + ' * ' + (y - 1) + ' / ' + this.height + ' ); }');
         }
         select(x, y, ...colors) {
-            if (colors.length <= 0) {
+            if (colors.length <= 0)
                 colors.push(this.colors[0].name);
-            }
             const box = this.board.querySelector('[ data-position = "x' + x + 'y' + y + '" ]');
             if (!box) {
                 return false;
             }
-            colors.forEach((color) => { box.classList.add(color); });
+            colors.forEach((color) => {
+                box.classList.add(color);
+            });
             return true;
         }
         deselect(x, y, ...colors) {
             if (colors.length <= 0) {
-                colors = this.colors.map((color) => { return color.name; });
+                colors = this.colors.map((color) => {
+                    return color.name;
+                });
             }
             if (x === undefined && y === undefined) {
                 let count = 0;
@@ -119,7 +123,9 @@
                     if (!box.classList.contains('on')) {
                         continue;
                     }
-                    colors.forEach((color) => { box.classList.remove(color); });
+                    colors.forEach((color) => {
+                        box.classList.remove(color);
+                    });
                     ++count;
                 }
                 return count;
@@ -128,7 +134,9 @@
             if (!box) {
                 return 0;
             }
-            colors.forEach((color) => { box.classList.remove(color); });
+            colors.forEach((color) => {
+                box.classList.remove(color);
+            });
             return 1;
         }
         convertPositiveNumber(value) {
@@ -143,8 +151,12 @@
             }
             return 1;
         }
-        get width() { return this.convertPositiveNumber(this.getAttribute('width') || ''); }
-        set width(value) { this.setAttribute('width', this.convertPositiveNumber(value) + ''); }
+        get width() {
+            return this.convertPositiveNumber(this.getAttribute('width') || '');
+        }
+        set width(value) {
+            this.setAttribute('width', this.convertPositiveNumber(value) + '');
+        }
         onUpdateWidth(value) {
             if (this.width !== (typeof value === 'number' ? value : parseInt(value))) {
                 this.width = value;
@@ -152,8 +164,12 @@
                 return;
             }
         }
-        get height() { return this.convertPositiveNumber(this.getAttribute('height') || ''); }
-        set height(value) { this.setAttribute('height', this.convertPositiveNumber(value) + ''); }
+        get height() {
+            return this.convertPositiveNumber(this.getAttribute('height') || '');
+        }
+        set height(value) {
+            this.setAttribute('height', this.convertPositiveNumber(value) + '');
+        }
         onUpdateHeight(value) {
             if (this.height !== (typeof value === 'number' ? value : parseInt(value))) {
                 this.height = value;
@@ -161,7 +177,9 @@
                 return;
             }
         }
-        static get observedAttributes() { return ['width', 'height']; }
+        static get observedAttributes() {
+            return ['width', 'height'];
+        }
         attributeChangedCallback(attrName, oldVal, newVal) {
             if (oldVal === newVal) {
                 return;

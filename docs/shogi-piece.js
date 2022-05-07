@@ -2,7 +2,9 @@
     if (document.readyState !== 'loading') {
         return init(script);
     }
-    document.addEventListener('DOMContentLoaded', () => { init(script); });
+    document.addEventListener('DOMContentLoaded', () => {
+        init(script);
+    });
 })(document.currentScript, (script) => {
     const Pieces = [
         { print: '玉', enemy: '王', names: ['king', 'k', '玉'] },
@@ -57,18 +59,28 @@
             };
             Pieces.forEach((data) => {
                 const basename = data.names[0];
-                styles.push(data.names.map((name) => { return ':host( [ piece = "' + name + '" ] ) .c.' + basename; }).join(',') +
+                styles.push(data.names.map((name) => {
+                    return ':host( [ piece = "' + name + '" ] ) .c.' + basename;
+                }).join(',') +
                     ' { display: block; }');
                 svg.appendChild(create(data.print, basename));
                 if (data.enemy) {
-                    styles.push(data.names.map((name) => { return ':host( [ piece = "' + name + '" ][ enemy ] ) .c.' + basename; }).join(',') +
-                        ' { display: none; }', data.names.map((name) => { return ':host( [ piece = "' + name + '" ][ enemy ] ) .c.e_' + basename; }).join(',') +
+                    styles.push(data.names.map((name) => {
+                        return ':host( [ piece = "' + name + '" ][ enemy ] ) .c.' + basename;
+                    }).join(',') +
+                        ' { display: none; }', data.names.map((name) => {
+                        return ':host( [ piece = "' + name + '" ][ enemy ] ) .c.e_' + basename;
+                    }).join(',') +
                         ' { display: block; }');
                     svg.appendChild(create(data.enemy, 'e_' + basename));
                 }
                 if (data.reverse) {
-                    styles.push(data.names.map((name) => { return ':host( [ piece = "' + name + '" ][ reverse ] ) .c.' + basename; }).join(',') +
-                        ' { display: none; }', data.names.map((name) => { return ':host( [ piece = "' + name + '" ][ reverse ] ) .c.r_' + basename; }).join(',') +
+                    styles.push(data.names.map((name) => {
+                        return ':host( [ piece = "' + name + '" ][ reverse ] ) .c.' + basename;
+                    }).join(',') +
+                        ' { display: none; }', data.names.map((name) => {
+                        return ':host( [ piece = "' + name + '" ][ reverse ] ) .c.r_' + basename;
+                    }).join(',') +
                         ' { display: block; }');
                     svg.appendChild(create(data.reverse, 'r_' + basename));
                 }
@@ -80,9 +92,15 @@
             shadow.appendChild(style);
             shadow.appendChild(contents);
         }
-        get piece() { return this.getAttribute('piece') || ''; }
-        set piece(value) { this.setAttribute('piece', value); }
-        get enemy() { return this.hasAttribute('enemy'); }
+        get piece() {
+            return this.getAttribute('piece') || '';
+        }
+        set piece(value) {
+            this.setAttribute('piece', value);
+        }
+        get enemy() {
+            return this.hasAttribute('enemy');
+        }
         set enemy(value) {
             if (value) {
                 this.setAttribute('enemy', 'true');
@@ -91,7 +109,9 @@
                 this.removeAttribute('enemy');
             }
         }
-        get reverse() { return this.hasAttribute('reverse'); }
+        get reverse() {
+            return this.hasAttribute('reverse');
+        }
         set reverse(value) {
             if (value) {
                 this.setAttribute('reverse', 'true');

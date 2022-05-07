@@ -66,6 +66,11 @@ interface InputSliderElement extends HTMLElement {
 					this.input.value = this.slider.value;
 				}
 
+				if (this.hasAttribute('disabled')) {
+					this.input.disabled = true;
+					this.slider.disabled = true;
+				}
+
 				(() => {
 					let timer = 0;
 					const onChange = () => {
@@ -177,7 +182,6 @@ interface InputSliderElement extends HTMLElement {
 			get disabled() {
 				return this.hasAttribute('disabled');
 			}
-
 			set disabled(value) {
 				if (!value) {
 					this.input.disabled = false;
@@ -191,7 +195,7 @@ interface InputSliderElement extends HTMLElement {
 			}
 
 			static get observedAttributes() {
-				return ['min', 'max', 'step', 'value'];
+				return ['min', 'max', 'step', 'disabled', 'value'];
 			}
 
 			attributeChangedCallback(name: string, oldValue: any, newValue: any) {
@@ -210,6 +214,9 @@ interface InputSliderElement extends HTMLElement {
 						break;
 					case 'value':
 						this.value = newValue;
+						break;
+					case 'disabled':
+						this.disabled = this.hasAttribute('disabled');
 						break;
 				}
 			}

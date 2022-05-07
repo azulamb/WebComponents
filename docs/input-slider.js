@@ -44,6 +44,10 @@
             else {
                 this.input.value = this.slider.value;
             }
+            if (this.hasAttribute('disabled')) {
+                this.input.disabled = true;
+                this.slider.disabled = true;
+            }
             (() => {
                 let timer = 0;
                 const onChange = () => {
@@ -160,7 +164,7 @@
             }
         }
         static get observedAttributes() {
-            return ['min', 'max', 'step', 'value'];
+            return ['min', 'max', 'step', 'disabled', 'value'];
         }
         attributeChangedCallback(name, oldValue, newValue) {
             if (oldValue === newValue) {
@@ -178,6 +182,9 @@
                     break;
                 case 'value':
                     this.value = newValue;
+                    break;
+                case 'disabled':
+                    this.disabled = this.hasAttribute('disabled');
                     break;
             }
         }

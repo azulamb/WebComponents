@@ -137,6 +137,7 @@ interface SwipeAreaEvent extends CustomEvent {
 			}
 
 			private cancel() {
+				// deno-fmt-ignore
 				this.sx = this.sy = this.ex = this.ey = NaN;
 			}
 

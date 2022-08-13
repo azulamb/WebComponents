@@ -19,6 +19,7 @@
 	<script src="./hide-box.js"></script>
 	<script src="./tweet-button.js"></script>
 	<script src="./twitter-button.js"></script>
+	<script src="./tweet-widget.js"></script>
 	<script src="./google-button.js"></script>
 	<script src="./braille-string.js"></script>
 	<script src="./morse-code.js"></script>
@@ -86,6 +87,12 @@ document.getElementById('slider').addEventListener( 'change', ( event ) => {
 <tweet-button text="テスト" hashtags="テスト,test" target="_blank">Tweet</tweet-button>
 <tweet-button text="テスト" url="https://www.google.com/" target="_blank">ツイート</tweet-button>
 <tweet-button text="テスト" target="_blank" disabled>Tweet</tweet-button></html-code>
+
+	<h2 class="wip">tweet-widget</h2>
+	<html-code change><tweet-widget tweet="https://twitter.com/TwitterJP/status/1558098524163948544"></tweet-widget>
+<tweet-widget tweet="https://twitter.com/TwitterJP/status/1558098524163948544" theme="dark"></tweet-widget>
+</html-code>
+
 
 	<h2>twitter-button</h2>
 	<html-code change><twitter-button>ログイン</twitter-button>

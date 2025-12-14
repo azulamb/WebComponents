@@ -1,158 +1,169 @@
 ((script, init) => {
-    if (document.readyState !== 'loading') {
-        return init(script);
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-        init(script);
-    });
+  if (document.readyState !== 'loading') {
+    return init(script);
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    init(script);
+  });
 })(document.currentScript, (script) => {
-    ((component, tagname = 'dice-roll') => {
-        if (customElements.get(tagname)) {
+  ((component, tagname = 'dice-roll') => {
+    if (customElements.get(tagname)) {
+      return;
+    }
+    customElements.define(tagname, component);
+  })(
+    class extends HTMLElement {
+      constructor() {
+        super();
+        this.timer = 0;
+        this._min = 1;
+        this._max = 6;
+        const shadow = this.attachShadow({ mode: 'open' });
+        const style = document.createElement('style');
+        style.innerHTML = [
+          ':host { display: inline-block; cursor: pointer; overflow: hidden; --dice-size: var( --size, 2rem ); width: var( --dice-size ); height: var( --dice-size ); color: var( --color ); }',
+          ':host > div { text-align: center; }',
+          ':host > div::before { content: "⚀"; font-size: var( --dice-size ); line-height: var( --dice-size ); font-family: var( --font ); }',
+          ':host( [ dice="2" ] ) > div::before { content: "⚁"; }',
+          ':host( [ dice="3" ] ) > div::before { content: "⚂"; }',
+          ':host( [ dice="4" ] ) > div::before { content: "⚃"; }',
+          ':host( [ dice="5" ] ) > div::before { content: "⚄"; }',
+          ':host( [ dice="6" ] ) > div::before { content: "⚅"; }',
+        ].join('');
+        const div = document.createElement('div');
+        div.addEventListener('click', () => {
+          if (this.roll()) {
             return;
+          }
+          this.stop();
+        });
+        if (this.hasAttribute('min')) {
+          this.min = parseInt(this.getAttribute('min') || '');
         }
-        customElements.define(tagname, component);
-    })(class extends HTMLElement {
-        constructor() {
-            super();
-            this.timer = 0;
-            this._min = 1;
-            this._max = 6;
-            const shadow = this.attachShadow({ mode: 'open' });
-            const style = document.createElement('style');
-            style.innerHTML = [
-                ':host { display: inline-block; cursor: pointer; overflow: hidden; --dice-size: var( --size, 2rem ); width: var( --dice-size ); height: var( --dice-size ); color: var( --color ); }',
-                ':host > div { text-align: center; }',
-                ':host > div::before { content: "⚀"; font-size: var( --dice-size ); line-height: var( --dice-size ); font-family: var( --font ); }',
-                ':host( [ dice="2" ] ) > div::before { content: "⚁"; }',
-                ':host( [ dice="3" ] ) > div::before { content: "⚂"; }',
-                ':host( [ dice="4" ] ) > div::before { content: "⚃"; }',
-                ':host( [ dice="5" ] ) > div::before { content: "⚄"; }',
-                ':host( [ dice="6" ] ) > div::before { content: "⚅"; }',
-            ].join('');
-            const div = document.createElement('div');
-            div.addEventListener('click', () => {
-                if (this.roll()) {
-                    return;
-                }
-                this.stop();
-            });
-            if (this.hasAttribute('min')) {
-                this.min = parseInt(this.getAttribute('min') || '');
-            }
-            if (this.hasAttribute('min')) {
-                this.max = parseInt(this.getAttribute('max') || '');
-            }
-            if (!this.hasAttribute('dice')) {
-                this.dice = this._min;
-            }
-            shadow.appendChild(style);
-            shadow.appendChild(div);
+        if (this.hasAttribute('min')) {
+          this.max = parseInt(this.getAttribute('max') || '');
         }
-        roll() {
-            if (this.timer) {
-                return false;
-            }
-            this.timer = setInterval(() => {
-                this.setAttribute('dice', this.diceRand());
-            }, 100);
-            return true;
+        if (!this.hasAttribute('dice')) {
+          this.dice = this._min;
         }
-        stop() {
-            if (!this.timer) {
-                return false;
-            }
-            clearInterval(this.timer);
-            this.timer = 0;
-            this.setAttribute('dice', this.diceRand());
-            return true;
+        shadow.appendChild(style);
+        shadow.appendChild(div);
+      }
+      roll() {
+        if (this.timer) {
+          return false;
         }
-        diceRand() {
-            return Math.floor(Math.random() * (this._max - this._min + 1) + this._min) + '';
+        this.timer = setInterval(() => {
+          this.setAttribute('dice', this.diceRand());
+        }, 100);
+        return true;
+      }
+      stop() {
+        if (!this.timer) {
+          return false;
         }
-        convertDiceNumber(value) {
-            if (typeof (value) !== 'number') {
-                value = parseInt(value);
-            }
-            value = Math.floor(value);
-            if (1 <= value && value <= 6) {
-                return value;
-            }
-            return 1;
+        clearInterval(this.timer);
+        this.timer = 0;
+        this.setAttribute('dice', this.diceRand());
+        return true;
+      }
+      diceRand() {
+        return Math.floor(
+          Math.random() * (this._max - this._min + 1) + this._min,
+        ) + '';
+      }
+      convertDiceNumber(value) {
+        if (typeof value !== 'number') {
+          value = parseInt(value);
         }
-        convertMinNumber(value) {
-            value = this.convertDiceNumber(value);
-            if (1 <= value && value <= this._max - 1) {
-                return value;
-            }
-            return 1;
+        value = Math.floor(value);
+        if (1 <= value && value <= 6) {
+          return value;
         }
-        convertMaxNumber(value) {
-            value = this.convertDiceNumber(value);
-            if (this._min + 1 <= value && value <= 6) {
-                return value;
-            }
-            return 6;
+        return 1;
+      }
+      convertMinNumber(value) {
+        value = this.convertDiceNumber(value);
+        if (1 <= value && value <= this._max - 1) {
+          return value;
         }
-        get min() {
-            return this._min;
+        return 1;
+      }
+      convertMaxNumber(value) {
+        value = this.convertDiceNumber(value);
+        if (this._min + 1 <= value && value <= 6) {
+          return value;
         }
-        set min(value) {
-            this._min = this.convertMinNumber(value);
-            this.setAttribute('min', this._min + '');
+        return 6;
+      }
+      get min() {
+        return this._min;
+      }
+      set min(value) {
+        this._min = this.convertMinNumber(value);
+        this.setAttribute('min', this._min + '');
+      }
+      onUpdateMin(value) {
+        if (
+          this._min !== (typeof value === 'number' ? value : parseInt(value))
+        ) {
+          this.min = value;
+          return;
         }
-        onUpdateMin(value) {
-            if (this._min !== (typeof value === 'number' ? value : parseInt(value))) {
-                this.min = value;
-                return;
-            }
+      }
+      get max() {
+        return this._max;
+      }
+      set max(value) {
+        this._max = this.convertMaxNumber(value);
+        this.setAttribute('max', this._max + '');
+      }
+      onUpdateMax(value) {
+        if (
+          this._max !== (typeof value === 'number' ? value : parseInt(value))
+        ) {
+          this.max = value;
+          return;
         }
-        get max() {
-            return this._max;
+      }
+      get dice() {
+        return this.convertDiceNumber(this.getAttribute('dice') || '');
+      }
+      set dice(value) {
+        this.setAttribute('dice', this.convertDiceNumber(value) + '');
+      }
+      onUpdateDice(value) {
+        if (this.timer) {
+          return;
         }
-        set max(value) {
-            this._max = this.convertMaxNumber(value);
-            this.setAttribute('max', this._max + '');
+        if (
+          this.dice !== (typeof value === 'number' ? value : parseInt(value))
+        ) {
+          this.dice = value;
+          return;
         }
-        onUpdateMax(value) {
-            if (this._max !== (typeof value === 'number' ? value : parseInt(value))) {
-                this.max = value;
-                return;
-            }
+        this.dispatchEvent(new Event('change'));
+      }
+      static get observedAttributes() {
+        return ['min', 'max', 'dice'];
+      }
+      attributeChangedCallback(attrName, oldVal, newVal) {
+        if (oldVal === newVal) {
+          return;
         }
-        get dice() {
-            return this.convertDiceNumber(this.getAttribute('dice') || '');
+        switch (attrName) {
+          case 'min':
+            this.onUpdateMin(newVal);
+            break;
+          case 'max':
+            this.onUpdateMax(newVal);
+            break;
+          case 'dice':
+            this.onUpdateDice(newVal);
+            break;
         }
-        set dice(value) {
-            this.setAttribute('dice', this.convertDiceNumber(value) + '');
-        }
-        onUpdateDice(value) {
-            if (this.timer) {
-                return;
-            }
-            if (this.dice !== (typeof value === 'number' ? value : parseInt(value))) {
-                this.dice = value;
-                return;
-            }
-            this.dispatchEvent(new Event('change'));
-        }
-        static get observedAttributes() {
-            return ['min', 'max', 'dice'];
-        }
-        attributeChangedCallback(attrName, oldVal, newVal) {
-            if (oldVal === newVal) {
-                return;
-            }
-            switch (attrName) {
-                case 'min':
-                    this.onUpdateMin(newVal);
-                    break;
-                case 'max':
-                    this.onUpdateMax(newVal);
-                    break;
-                case 'dice':
-                    this.onUpdateDice(newVal);
-                    break;
-            }
-        }
-    }, script.dataset.tagname);
+      }
+    },
+    script.dataset.tagname,
+  );
 });

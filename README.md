@@ -4,17 +4,17 @@ My WebComponents list.
 
 ## Develop
 
-``` sh
+```sh
 npm i -g typescript
 ```
 
-``` sh
+```sh
 tsc --version
 Version 3.2.4
 ```
 
 ## Build
 
-``` sh
+```sh
 npm run build
 ```

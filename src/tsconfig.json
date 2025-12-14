@@ -1,15 +1,15 @@
 {
-	"compilerOptions": {
-		"outDir": "../docs",
-		"module": "es6",
-		"lib": ["dom", "es2021"],
-		"target": "es6",
-		"removeComments": true,
-		"strictNullChecks": true,
-		"noImplicitAny": true,
-		"sourceMap": false
-	},
-	"include": [
-		"./*.ts"
-	]
+  "compilerOptions": {
+    "outDir": "../docs",
+    "module": "es6",
+    "lib": ["dom", "es2021"],
+    "target": "es6",
+    "removeComments": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "sourceMap": false
+  },
+  "include": [
+    "./*.ts"
+  ]
 }

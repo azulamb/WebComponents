@@ -150,6 +150,6 @@ interface GoogleButtonElement extends HTMLElement {
         this.link.href = newVal;
       }
     },
-    script.dataset.tagname,
+    script.dataset.googleButton,
   );
 });

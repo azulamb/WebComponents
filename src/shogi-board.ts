@@ -45,7 +45,7 @@ interface ShogiBoardElement extends GameBoardElement {}
     init(script);
   });
 })(<HTMLScriptElement> document.currentScript, (script: HTMLScriptElement) => {
-  const piecetag = script.dataset.piece || 'shogi-piece';
+  const pieceTag = script.dataset.shogiPiece || 'shogi-piece';
 
   type GameBoardClass = new () => GameBoardElement & {
     colors: { name: string; var: string; color: string }[];
@@ -63,7 +63,7 @@ interface ShogiBoardElement extends GameBoardElement {}
     if (customElements.get(tagname)) {
       return;
     }
-    customElements.whenDefined(piecetag).then(() => {
+    customElements.whenDefined(pieceTag).then(() => {
       customElements.define(tagname, component);
     });
   })(
@@ -122,7 +122,7 @@ interface ShogiBoardElement extends GameBoardElement {}
           // 将棋の駒を文字列で指定されているので、その駒を作る。
           const name = piece;
           piece = new (<{ new (): ShogiPieceElement }> customElements.get(
-            piecetag,
+            pieceTag,
           ))();
           piece.piece = <any> name;
         }
@@ -144,7 +144,7 @@ interface ShogiBoardElement extends GameBoardElement {}
         const element = this.querySelector(
           '[ data-position="x' + Math.floor(x) + 'y' + Math.floor(y) + '" ]',
         );
-        if (!element || element.tagName !== piecetag) {
+        if (!element || element.tagName !== pieceTag) {
           return null;
         }
         return <ShogiPieceElement> element;
@@ -170,9 +170,9 @@ interface ShogiBoardElement extends GameBoardElement {}
       // 駒を取ります。
       // 指定座標にある駒を対象の手持ちに加えます。
       public capture(x: number, y: number, enemy: boolean) {
-        this.querySelectorAll(
-          '[ data-position="x' + Math.floor(x) + 'y' + Math.floor(y) + '" ]',
-        ).forEach((piece: ShogiPieceElement) => {
+        (<ShogiPieceElement[]> <unknown> this.querySelectorAll(
+          '[data-position="x' + Math.floor(x) + 'y' + Math.floor(y) + '"]',
+        )).forEach((piece) => {
           // 自分の味方は取りません。
           if (piece.enemy === enemy) {
             return;
@@ -184,6 +184,6 @@ interface ShogiBoardElement extends GameBoardElement {}
         });
       }
     },
-    script.dataset.tagname,
+    script.dataset.shogiBoard,
   );
 });

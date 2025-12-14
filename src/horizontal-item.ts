@@ -1,6 +1,6 @@
 /* */
 
-interface HorizontaItemElement extends HTMLElement {
+interface HorizontalItemElement extends HTMLElement {
 }
 
 ((script, init) => {
@@ -17,7 +17,7 @@ interface HorizontaItemElement extends HTMLElement {
     }
     customElements.define(tagname, component);
   })(
-    class extends HTMLElement implements HorizontaItemElement {
+    class extends HTMLElement implements HorizontalItemElement {
       constructor() {
         super();
 
@@ -36,6 +36,6 @@ interface HorizontaItemElement extends HTMLElement {
         shadow.appendChild(contents);
       }
     },
-    script.dataset.tagname,
+    script.dataset.horizontalItem,
   );
 });

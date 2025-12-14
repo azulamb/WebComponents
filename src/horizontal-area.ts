@@ -150,6 +150,6 @@ interface HorizontalAreaElement extends HTMLElement {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     },
-    script.dataset.tagname,
+    script.dataset.horizontalArea,
   );
 });

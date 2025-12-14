@@ -121,15 +121,15 @@ interface GameBoardElement extends HTMLElement {
         // 上と下の要素
         const top = document.createElement('div');
         top.classList.add('top');
-        const topslot = document.createElement('slot');
-        topslot.name = 'top';
-        top.appendChild(topslot);
+        const topSlot = document.createElement('slot');
+        topSlot.name = 'top';
+        top.appendChild(topSlot);
 
         const bottom = document.createElement('div');
         bottom.classList.add('bottom');
-        const bottomslot = document.createElement('slot');
-        bottomslot.name = 'bottom';
-        bottom.appendChild(bottomslot);
+        const bottomSlot = document.createElement('slot');
+        bottomSlot.name = 'bottom';
+        bottom.appendChild(bottomSlot);
 
         shadow.appendChild(style);
         shadow.appendChild(this.boardStyle);
@@ -388,6 +388,6 @@ interface GameBoardElement extends HTMLElement {
         }
       }
     },
-    script.dataset.tagname,
+    script.dataset.gameBoard,
   );
 });

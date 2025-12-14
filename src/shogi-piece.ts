@@ -4,7 +4,7 @@
 
 使い方：
 <shogi-piece></shogi-piece>
-<shogi-piece piece="PIECE" reverse emeny style="--size: SIZE;"></shogi-piece>
+<shogi-piece piece="PIECE" reverse enemy style="--size: SIZE;"></shogi-piece>
 * PIECE
     * 将棋の駒を指定します。英語表記はWikipediaを参照しました。
         * 玉 もしくは king   もしくは k ... 玉。ただしenemy属性がある場合は王になります。
@@ -213,7 +213,7 @@ interface ShogiPieceElement extends HTMLElement {
         this.setAttribute('piece', value);
       }
 
-      // enemyはemeny属性がある場合はtrue、ない場合はfalseを返します。
+      // enemyはenemy属性がある場合はtrue、ない場合はfalseを返します。
       get enemy() {
         return this.hasAttribute('enemy');
       }
@@ -243,6 +243,6 @@ interface ShogiPieceElement extends HTMLElement {
         }
       }
     },
-    script.dataset.tagname,
+    script.dataset.shogiPiece,
   );
 });

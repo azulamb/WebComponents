@@ -60,6 +60,6 @@ interface TwitterButtonElement extends HTMLElement {
         shadow.appendChild(button);
       }
     },
-    script.dataset.tagname,
+    script.dataset.twitterButton,
   );
 });

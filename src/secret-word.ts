@@ -57,6 +57,6 @@ interface SecretWordElement extends HTMLElement {
         this.dispatchEvent(new Event('open'));
       }
     },
-    script.dataset.tagname,
+    script.dataset.secretWord,
   );
 });

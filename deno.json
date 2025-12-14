@@ -1,12 +1,13 @@
 {
   "tasks": {
-    "build": "tsc -p ./src/"
+    "build": "deno bundle --minify --outdir docs/ src/*",
   },
   "lint": {
     "include": ["./"]
   },
   "fmt": {
     "include": ["./"],
+    "exclude": ["./docs"],
     "singleQuote": true
   }
 }

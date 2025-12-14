@@ -75,6 +75,6 @@ interface ToggleButtonElement extends HTMLElement {
         this.checked = newValue !== null;
       }
     },
-    script.dataset.tagname,
+    script.dataset.toggleButton,
   );
 });

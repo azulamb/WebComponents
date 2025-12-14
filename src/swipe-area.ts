@@ -6,6 +6,11 @@ interface SwipeAreaElement extends HTMLElement {
     listener: (event: SwipeAreaEvent) => any,
     options?: boolean | AddEventListenerOptions,
   ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
 }
 
 interface SwipeAreaData {
@@ -35,10 +40,10 @@ interface SwipeAreaEvent extends CustomEvent {
     customElements.define(tagname, component);
   })(
     class extends HTMLElement implements SwipeAreaElement {
-      private sx: number;
-      private sy: number;
-      private ex: number;
-      private ey: number;
+      private sx!: number;
+      private sy!: number;
+      private ex!: number;
+      private ey!: number;
 
       constructor() {
         super();
@@ -75,16 +80,16 @@ interface SwipeAreaEvent extends CustomEvent {
           this.cancel();
         });
 
-        let onmouse = false;
+        let onMouse = false;
         contents.addEventListener('mousedown', (event) => {
-          onmouse = true;
+          onMouse = true;
           if (touched) {
             return;
           }
           this.begin(event.clientX, event.clientY);
         });
         contents.addEventListener('mousemove', (event) => {
-          if (!onmouse || touched) {
+          if (!onMouse || touched) {
             return;
           }
           this.move(event.clientX, event.clientY);
@@ -93,10 +98,10 @@ interface SwipeAreaEvent extends CustomEvent {
           if (!touched) {
             this.end();
           }
-          touched = onmouse = false;
+          touched = onMouse = false;
         });
         contents.addEventListener('mouseleave', (event) => {
-          if (!onmouse) {
+          if (!onMouse) {
             return;
           }
           this.cancel();
@@ -167,6 +172,6 @@ interface SwipeAreaEvent extends CustomEvent {
         this.setAttribute('distance', value + '');
       }
     },
-    script.dataset.tagname,
+    script.dataset.swipeArea,
   );
 });

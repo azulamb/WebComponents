@@ -20,16 +20,16 @@ interface CheckItemElement extends HTMLElement {
   });
 })(<HTMLScriptElement> document.currentScript, (script: HTMLScriptElement) => {
   class CheckList extends HTMLElement implements CheckListElement {
-    private static ITEMNAME: string;
-    public static Init(tagname = 'check-list', itemname = 'check-item') {
+    private static ITEM_NAME: string;
+    public static Init(tagname = 'check-list', itemName = 'check-item') {
       if (customElements.get(tagname)) {
         return;
       }
-      CheckItem.Init(itemname);
-      this.ITEMNAME = itemname.replace(/[a-z]/g, (c) => {
+      CheckItem.Init(itemName);
+      this.ITEM_NAME = itemName.replace(/[a-z]/g, (c) => {
         return String.fromCharCode(c.charCodeAt(0) & ~32);
       });
-      customElements.whenDefined(itemname).then(() => {
+      customElements.whenDefined(itemName).then(() => {
         customElements.define(tagname, this);
       });
     }
@@ -55,7 +55,7 @@ interface CheckItemElement extends HTMLElement {
       const list: CheckItemElement[] = [];
 
       this.querySelectorAll('[ checked ]').forEach((item) => {
-        if (item.tagName === CheckList.ITEMNAME) {
+        if (item.tagName === CheckList.ITEM_NAME) {
           list.push(<CheckItemElement> item);
         }
       });
@@ -119,5 +119,5 @@ interface CheckItemElement extends HTMLElement {
     }
   }
 
-  CheckList.Init(script.dataset.tagname, script.dataset.itemname);
+  CheckList.Init(script.dataset.checkList, script.dataset.checkItem);
 });

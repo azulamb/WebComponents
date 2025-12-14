@@ -217,6 +217,6 @@ interface TweetButtonElement extends HTMLElement {
         this.update();
       }
     },
-    script.dataset.tagname,
+    script.dataset.tweetButton,
   );
 });

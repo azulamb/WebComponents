@@ -79,6 +79,6 @@ interface HTMLCodeElement extends HTMLElement {
         this.code.textContent = this.innerHTML.replace(/\=\"\"/g, '');
       }
     },
-    script.dataset.tagname,
+    script.dataset.htmlCode,
   );
 });

@@ -35,12 +35,12 @@ interface RatingStarElement extends HTMLElement {
   });
 })(<HTMLScriptElement> document.currentScript, (script: HTMLScriptElement) => {
   // 今回はタグ名だけでなく、中に使う★のタグ名も指定できるようにします。
-  const startag = script.dataset.star || 'favorite-button';
+  const starTag = script.dataset.favoriteButton || 'favorite-button';
   ((component, tagname = 'rating-stars') => {
     if (customElements.get(tagname)) {
       return;
     }
-    customElements.whenDefined(startag).then(() => {
+    customElements.whenDefined(starTag).then(() => {
       customElements.define(tagname, component);
     });
   })(
@@ -113,8 +113,8 @@ interface RatingStarElement extends HTMLElement {
         // customElements.get( タグ名 ) でタグと関連付けられたコンストラクタを取得します。
         // 後はnewすれば要素を作ることができます。
         // undefinedが返ってくる可能性もありますが、すでに定義されていることは customElements.whenDefined() で確認できているので、チェックもなしに使います。
-        // 今回は on 属性以外はそんなに変わったところもないので、HTMLElmentを返すという想定にしています。
-        return new (<{ new (): HTMLElement }> (customElements.get(startag)))();
+        // 今回は on 属性以外はそんなに変わったところもないので、HTMLElementを返すという想定にしています。
+        return new (<{ new (): HTMLElement }> (customElements.get(starTag)))();
       }
 
       private convertPositiveNumber(value: number | string) {
@@ -213,6 +213,6 @@ interface RatingStarElement extends HTMLElement {
         }
       }
     },
-    script.dataset.tagname,
+    script.dataset.ratingStars,
   );
 });

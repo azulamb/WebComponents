@@ -13,7 +13,7 @@ interface TweetWidgetElement extends HTMLElement {
     init(script);
   });
 })(<HTMLScriptElement> document.currentScript, (script: HTMLScriptElement) => {
-  const tagname = script.dataset.tagname || 'tweet-widget';
+  const tagname = script.dataset.tweetWidget || 'tweet-widget';
   ((component) => {
     if (customElements.get(tagname)) {
       return;
@@ -21,7 +21,7 @@ interface TweetWidgetElement extends HTMLElement {
     customElements.define(tagname, component);
   })(
     class extends HTMLElement implements TweetWidgetElement {
-      private timer: number;
+      private timer!: number;
 
       constructor() {
         super();

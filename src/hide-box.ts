@@ -20,7 +20,6 @@ interface HideBoxElement extends HTMLElement {
     customElements.define(tagname, component);
   })(
     class extends HTMLElement implements HideBoxElement {
-      private button: HTMLAnchorElement;
       constructor() {
         super();
 
@@ -61,6 +60,6 @@ interface HideBoxElement extends HTMLElement {
         }
       }
     },
-    script.dataset.tagname,
+    script.dataset.hideBox,
   );
 });

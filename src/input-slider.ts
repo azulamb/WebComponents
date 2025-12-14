@@ -218,6 +218,6 @@ interface InputSliderElement extends HTMLElement {
         }
       }
     },
-    script.dataset.tagname,
+    script.dataset.inputSlider,
   );
 });

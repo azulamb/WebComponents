@@ -87,7 +87,7 @@ interface HexChipElement extends HTMLElement {
           this.tapEvent();
           clear();
         };
-        const longtap = () => {
+        const longTap = () => {
           start();
           timer = setTimeout(() => {
             this.longTapEvent();
@@ -99,7 +99,7 @@ interface HexChipElement extends HTMLElement {
           event.preventDefault();
         });
         this.hex.addEventListener('touchstart', (event) => {
-          longtap();
+          longTap();
           touch = true;
         });
         this.hex.addEventListener('touchend', (event) => {
@@ -110,7 +110,7 @@ interface HexChipElement extends HTMLElement {
           if (touch) {
             return;
           }
-          longtap();
+          longTap();
         });
         this.hex.addEventListener('mouseup', (event) => {
           if (touch) {
@@ -191,6 +191,6 @@ interface HexChipElement extends HTMLElement {
         this.drawHex();
       }
     },
-    script.dataset.tagname,
+    script.dataset.hexChip,
   );
 });

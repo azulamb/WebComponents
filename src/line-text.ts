@@ -95,6 +95,6 @@ interface LineTextElement extends HTMLElement {
         this.update();
       }
     },
-    script.dataset.tagname,
+    script.dataset.lineText,
   );
 });

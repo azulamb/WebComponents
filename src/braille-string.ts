@@ -38,7 +38,7 @@ interface AddBrailleString {
 
   AddTable('en', {});
 
-  (<any> window)[script.dataset.addfunc || 'AddBrailleString'] = AddTable;
+  (<any> window)[script.dataset.addFunc || 'AddBrailleString'] = AddTable;
 
   ((component, tagname = 'braille-string') => {
     if (customElements.get(tagname)) {
@@ -72,13 +72,13 @@ interface AddBrailleString {
         this.update();
       }
 
-      private numToBraille(bnum: number) {
+      private numToBraille(bNum: number) {
         const str: string[] = [];
         do {
-          const b = bnum & 0x1F;
+          const b = bNum & 0x1F;
           str.push(String.fromCodePoint(b + 0x2800));
-          bnum >>= 6;
-        } while (0 < bnum);
+          bNum >>= 6;
+        } while (0 < bNum);
 
         return str.join('');
       }
@@ -113,6 +113,6 @@ interface AddBrailleString {
         this.update();
       }
     },
-    script.dataset.tagname,
+    script.dataset.brailleString,
   );
 });

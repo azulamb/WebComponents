@@ -309,6 +309,6 @@ interface DiceRollElement extends HTMLElement {
         }
       }
     },
-    script.dataset.tagname,
+    script.dataset.diceRoll,
   );
 });

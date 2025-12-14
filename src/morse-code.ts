@@ -78,7 +78,7 @@ interface AddMorseCode {
     z: '1100',
   });
 
-  (<any> window)[script.dataset.addfunc || 'AddMorseCode'] = AddTable;
+  (<any> window)[script.dataset.addFunc || 'AddMorseCode'] = AddTable;
 
   ((component, tagname = 'morse-code') => {
     if (customElements.get(tagname)) {
@@ -150,6 +150,6 @@ interface AddMorseCode {
         this.update();
       }
     },
-    script.dataset.tagname,
+    script.dataset.morseCode,
   );
 });

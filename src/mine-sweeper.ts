@@ -3,8 +3,8 @@ interface MineSweeperElement extends HTMLElement {
   play(x: number, y: number): void;
   open(x: number, y: number): void;
   flag(x: number, y: number): void;
-  gameover(): void;
-  gameclear(): void;
+  gameOver(): void;
+  gameClear(): void;
 }
 
 interface MineBlockElement extends HTMLElement {
@@ -16,6 +16,25 @@ interface MineBlockElement extends HTMLElement {
   hasFlag(): boolean;
   open(bombs?: number): void;
   flag(): void;
+  addEventListener(
+    type: 'open' | 'flag',
+    listener: (this: MineBlockElement, ev: MineEvent) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener<K extends keyof HTMLElementEventMap>(
+    type: K,
+    listener: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+}
+
+interface MineEvent extends Event {
+  detail: MineValue;
+}
+
+interface MineValue {
+  x: number;
+  y: number;
 }
 
 ((script, init) => {
@@ -28,11 +47,11 @@ interface MineBlockElement extends HTMLElement {
 })(<HTMLScriptElement> document.currentScript, (script: HTMLScriptElement) => {
   class MineSweeper extends HTMLElement implements MineSweeperElement {
     private boardStyle: HTMLStyleElement;
-    private width: HTMLInputElement;
-    private height: HTMLInputElement;
-    private bombs: HTMLInputElement;
-    private board: HTMLElement;
-    private maxbombs: number;
+    private width!: HTMLInputElement;
+    private height!: HTMLInputElement;
+    private bombs!: HTMLInputElement;
+    private board!: HTMLElement;
+    private maxBombs!: number;
 
     constructor() {
       super();
@@ -74,7 +93,7 @@ interface MineBlockElement extends HTMLElement {
       // ヘッダー部分です。
       const header = document.createElement('header');
 
-      this.maxbombs = bombs;
+      this.maxBombs = bombs;
 
       // 要素を生成する一時的な関数を作っておきます。
       function createNumInput(value: number) {
@@ -122,12 +141,14 @@ interface MineBlockElement extends HTMLElement {
     }
 
     private createBlock(x: number, y: number) {
-      const block: MineBlock = new MineBlock(x, y);
-      block.addEventListener('open', (event: MineEvent) => {
-        this.open(event.detail.x, event.detail.y);
+      const block = new MineBlock(x, y);
+      block.addEventListener('open', (event) => {
+        const detail = (<MineEvent> event).detail;
+        this.open(detail.x, detail.y);
       });
-      block.addEventListener('flag', (event: MineEvent) => {
-        this.flag(event.detail.x, event.detail.y);
+      block.addEventListener('flag', (event) => {
+        const detail = (<MineEvent> event).detail;
+        this.flag(detail.x, detail.y);
       });
       return block;
     }
@@ -169,11 +190,12 @@ interface MineBlockElement extends HTMLElement {
       this.setAttribute('play', '');
 
       // 開いていないブロックの一覧を作ります。
-      const blocks = <MineBlock[]> Array.from(this.board.children).filter(
-        (block: MineBlock) => {
-          return !block.isOpen();
-        },
-      );
+      const blocks = (<MineBlockElement[]> Array.from(this.board.children))
+        .filter(
+          (block) => {
+            return !block.isOpen();
+          },
+        );
 
       // 上から順番に爆弾を置いていきます。
       // ランダムに座標を作ってそこに爆弾が置かれていなければ爆弾を置くという手法に比べて、
@@ -186,10 +208,10 @@ interface MineBlockElement extends HTMLElement {
       }
 
       // 爆弾は設定数もしくは最大数までにしておきます。
-      this.maxbombs = Math.min(parseInt(this.bombs.value), blocks.length);
+      this.maxBombs = Math.min(parseInt(this.bombs.value), blocks.length);
 
       // 爆弾を設置します。
-      for (let b = 0; b < this.maxbombs; ++b) {
+      for (let b = 0; b < this.maxBombs; ++b) {
         blocks[b].setBomb();
       }
     }
@@ -206,22 +228,22 @@ interface MineBlockElement extends HTMLElement {
       // 開いた場所に爆弾があるかチェックします。
       if (blocks[y * width + x].isBomb()) {
         // ゲームオーバー処理をします。
-        return this.gameover();
+        return this.gameOver();
       }
 
       // 残っているブロックと爆弾の数を比較します。
-      if (this.countBlock(blocks) === this.maxbombs) {
+      if (this.countBlock(blocks) === this.maxBombs) {
         // ゲームクリア処理をします。
-        return this.gameclear();
+        return this.gameClear();
       }
 
       // 開いた場所に連なる爆弾なしブロックを列挙します。
-      const nobombs = this.getCanOpenBlocks(blocks, x, y, width, height);
-      // 開いた場所に数値があるかもしれないので、nobombsに追加しておきます。
-      nobombs.push(blocks[y * width + x]);
+      const noBombs = this.getCanOpenBlocks(blocks, x, y, width, height);
+      // 開いた場所に数値があるかもしれないので、noBombsに追加しておきます。
+      noBombs.push(blocks[y * width + x]);
 
       // 開くと同時に周囲の爆弾の数をカウントします。
-      nobombs.forEach((block) => {
+      noBombs.forEach((block) => {
         // ブロックを周囲の爆弾数を渡して開きます。
         block.open(
           this.countBombs(blocks, block.getX(), block.getY(), width, height),
@@ -236,16 +258,16 @@ interface MineBlockElement extends HTMLElement {
       // 旗が立っている＋開いていないブロックの数を数えます。
       const flags =
         this.board.querySelectorAll('[ flag ]:not([ open ])').length;
-      const bombs = this.maxbombs - flags;
+      const bombs = this.maxBombs - flags;
       // TODO:
       this.bombs.value = bombs + '';
     }
 
-    public gameover() {
+    public gameOver() {
       this.setAttribute('game', 'over');
     }
 
-    public gameclear() {
+    public gameClear() {
       this.setAttribute('game', 'clear');
     }
 
@@ -267,7 +289,7 @@ interface MineBlockElement extends HTMLElement {
       // このようにブロックを調べながら配列を追加しますが、重複ブロックが追加されなければいつか終わります。
 
       // 爆弾が配置されていない開けるブロックの配列です。
-      const nobombs: MineBlock[] = [];
+      const noBombs: MineBlock[] = [];
       // 調べるべきブロックです。
       const search: MineBlock[] = [blocks[y * width + x]];
 
@@ -283,42 +305,42 @@ interface MineBlockElement extends HTMLElement {
         // 上のブロックを調べます。
         let b = blocks[(y - 1) * width + x];
         if (
-          0 < y && nobombs.indexOf(b) < 0 && !b.isBomb() && !b.isOpen() &&
+          0 < y && noBombs.indexOf(b) < 0 && !b.isBomb() && !b.isOpen() &&
           !b.hasFlag()
         ) {
           search.push(b);
-          nobombs.push(b);
+          noBombs.push(b);
         }
         // 下のブロックを調べます。
         b = blocks[(y + 1) * width + x];
         if (
-          y + 1 < height && nobombs.indexOf(b) < 0 && !b.isBomb() &&
+          y + 1 < height && noBombs.indexOf(b) < 0 && !b.isBomb() &&
           !b.isOpen() && !b.hasFlag()
         ) {
           search.push(b);
-          nobombs.push(b);
+          noBombs.push(b);
         }
         // 左のブロックを調べます。
         b = blocks[y * width + x - 1];
         if (
-          0 < x && nobombs.indexOf(b) < 0 && !b.isBomb() && !b.isOpen() &&
+          0 < x && noBombs.indexOf(b) < 0 && !b.isBomb() && !b.isOpen() &&
           !b.hasFlag()
         ) {
           search.push(b);
-          nobombs.push(b);
+          noBombs.push(b);
         }
         // 右のブロックを調べます。
         b = blocks[y * width + x + 1];
         if (
-          x + 1 < width && nobombs.indexOf(b) < 0 && !b.isBomb() &&
+          x + 1 < width && noBombs.indexOf(b) < 0 && !b.isBomb() &&
           !b.isOpen() && !b.hasFlag()
         ) {
           search.push(b);
-          nobombs.push(b);
+          noBombs.push(b);
         }
       } while (0 < search.length);
 
-      return nobombs;
+      return noBombs;
     }
 
     private countBombs(
@@ -356,15 +378,6 @@ interface MineBlockElement extends HTMLElement {
       });
       return count;
     }
-  }
-
-  interface MineEvent extends Event {
-    detail: MineValue;
-  }
-
-  interface MineValue {
-    x: number;
-    y: number;
   }
 
   class MineBlock extends HTMLElement implements MineBlockElement {
@@ -506,13 +519,13 @@ interface MineBlockElement extends HTMLElement {
     }
   }
 
-  ((tagname = 'mine-sweeper', blocktag = 'mine-block') => {
+  ((tagname = 'mine-sweeper', blockTag = 'mine-block') => {
     if (customElements.get(tagname)) {
       return;
     }
-    customElements.define(blocktag, MineBlock);
-    customElements.whenDefined(blocktag).then(() => {
+    customElements.define(blockTag, MineBlock);
+    customElements.whenDefined(blockTag).then(() => {
       customElements.define(tagname, MineSweeper);
     });
-  })(script.dataset.tagname, script.dataset.blockname);
+  })(script.dataset.mineSweeper, script.dataset.mineBlock);
 });

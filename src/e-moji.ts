@@ -128,6 +128,6 @@ interface EmojiElement extends HTMLElement {
         this.text.textContent = this.value + skin;
       }
     },
-    script.dataset.tagname,
+    script.dataset.eMoji,
   );
 });

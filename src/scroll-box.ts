@@ -31,6 +31,6 @@
         shadow.appendChild(document.createElement('slot'));
       }
     },
-    script.dataset.tagname,
+    script.dataset.scrollBox,
   );
 });

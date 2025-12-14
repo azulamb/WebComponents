@@ -1,8 +1,8 @@
 /* */
 
 interface ModalDialogElement extends HTMLElement {
-  nobackclose: boolean;
-  noclosebutton: boolean;
+  noBackClose: boolean;
+  noCloseButton: boolean;
   show(): void;
   close(): void;
 }
@@ -22,7 +22,7 @@ interface ModalDialogElement extends HTMLElement {
     customElements.define(tagname, component);
   })(
     class extends HTMLElement implements ModalDialogElement {
-      public onclose: () => boolean;
+      public onclose!: () => boolean;
       private bodyOverflow = '';
 
       constructor() {
@@ -39,16 +39,16 @@ interface ModalDialogElement extends HTMLElement {
           ':host > div > div > div { border-radius: 0.2em; background: var( --dialog-back ); max-height: calc( 100vh - var( --padding ) * 2 ); padding: 0.5em; box-sizing: border-box; overflow: auto; }',
           ':host button { position: absolute; display: block; right: var( --offset-button ); top: var( --offset-button ); border-radius: 50%; width: var( --button-size ); height: var( --button-size ); border: 0; outline: 0; box-sizing: border-box; text-align: center; padding: 0; cursor: pointer; font-weight: bold; font-family: monospace; }',
           ':host button::before { content:var( --close-symbol ); display: inline; }',
-          ':host( [ nobutton ] ) > div > button { display: none; }',
+          ':host( [nobutton] ) > div > button { display: none; }',
         ].join('');
 
-        const dialogcontents = document.createElement('div');
-        dialogcontents.appendChild(document.createElement('slot'));
+        const dialogContents = document.createElement('div');
+        dialogContents.appendChild(document.createElement('slot'));
 
         const close = document.createElement('button');
 
         const dialog = document.createElement('div');
-        dialog.appendChild(dialogcontents);
+        dialog.appendChild(dialogContents);
         dialog.appendChild(close);
 
         const contents = document.createElement('div');
@@ -57,18 +57,18 @@ interface ModalDialogElement extends HTMLElement {
         shadow.appendChild(style);
         shadow.appendChild(contents);
 
-        ((stopevent) => {
-          this.addEventListener('wheel', stopevent);
-          this.addEventListener('contextmenu', stopevent);
+        ((stopEvent) => {
+          this.addEventListener('wheel', stopEvent);
+          this.addEventListener('contextmenu', stopEvent);
         })((event: MouseEvent) => {
           event.stopPropagation();
           event.preventDefault();
         });
 
-        ((stopevent) => {
-          dialogcontents.addEventListener('wheel', stopevent);
-          dialogcontents.addEventListener('contextmenu', stopevent);
-          dialogcontents.addEventListener('click', stopevent);
+        ((stopEvent) => {
+          dialogContents.addEventListener('wheel', stopEvent);
+          dialogContents.addEventListener('contextmenu', stopEvent);
+          dialogContents.addEventListener('click', stopEvent);
         })((event: MouseEvent) => {
           event.stopPropagation();
         });
@@ -78,7 +78,7 @@ interface ModalDialogElement extends HTMLElement {
           close.addEventListener('click', onClose);
         })((event: MouseEvent) => {
           event.stopPropagation();
-          if (event.target === this && this.nobackclose) {
+          if (event.target === this && this.noBackClose) {
             return;
           }
           if (this.onclose && !this.onclose()) {
@@ -94,19 +94,19 @@ interface ModalDialogElement extends HTMLElement {
         }
       }
 
-      get nobackclose() {
+      get noBackClose() {
         return this.hasAttribute('nobackclose');
       }
-      set nobackclose(value) {
+      set noBackClose(value) {
         value
           ? this.setAttribute('nobackclose', 'nobackclose')
           : this.removeAttribute('nobackclose');
       }
 
-      get noclosebutton() {
+      get noCloseButton() {
         return this.hasAttribute('noclosebutton');
       }
-      set noclosebutton(value) {
+      set noCloseButton(value) {
         value
           ? this.setAttribute('noclosebutton', 'noclosebutton')
           : this.removeAttribute('nobackclose');
@@ -125,6 +125,6 @@ interface ModalDialogElement extends HTMLElement {
         return this;
       }
     },
-    script.dataset.tagname,
+    script.dataset.modalDialog,
   );
 });

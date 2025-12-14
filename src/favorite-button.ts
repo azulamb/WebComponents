@@ -106,6 +106,6 @@ interface FavoriteButtonElement extends HTMLElement {}
 			*/
       }
     },
-    script.dataset.tagname,
+    script.dataset.favoriteButton,
   );
 });

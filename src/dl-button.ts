@@ -75,6 +75,6 @@
         }
       }
     },
-    script.dataset.tagname,
+    script.dataset.dlButton,
   );
 });

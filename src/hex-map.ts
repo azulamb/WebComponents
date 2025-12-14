@@ -36,6 +36,6 @@ interface HexMapElement extends HTMLElement {
         shadow.appendChild(contents);
       }
     },
-    script.dataset.tagname,
+    script.dataset.hexMap,
   );
 });
